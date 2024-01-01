@@ -38,7 +38,7 @@ public class NewsService implements INewsService {
             news.setUrl(newsDetails.getUrl());
             news.setTitle(newsDetails.getTitle());
             news.setTag(newsDetails.getTag());
-            news.setImage(newsDetails.getImage());
+            news.setImageUrl(newsDetails.getImageUrl());
             news.setContent(newsDetails.getContent());
             news.setPublishTime(newsDetails.getPublishTime());
             return newsRepository.save(news);

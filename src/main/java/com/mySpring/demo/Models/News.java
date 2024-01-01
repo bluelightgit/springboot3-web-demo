@@ -20,14 +20,17 @@ public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    // @ElementCollection
-    private String url;
+    @ElementCollection
     private List<String> tag;
+    
+    private String url;
     private String title;
     private Long publishTime;
-    @Lob
-    private byte[] image;
     private String content;
+    private String imageUrl;
+    // @Lob
+    // private byte[] image;
+
 
     
     // getters and setters
@@ -47,8 +50,8 @@ public class News {
         return tag;
     }
 
-    public byte[] getImage() {
-        return image;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public String getContent() {
@@ -75,8 +78,8 @@ public class News {
         this.tag = tag;
     }
 
-    public void setImage(byte[] image) {
-        this.image = image;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public void setContent(String content) {
