@@ -26,6 +26,8 @@ public class Visitor {
     private Long NewsId;
     private Long timeStamp;
     // private HashMap<Long, Long> history; // key: timestamp, value: newsId
+    private String UUID;
+    private String cookie;
     @ElementCollection
     private List<VisitorHistory> history;
 
@@ -51,6 +53,14 @@ public class Visitor {
 
     public List<VisitorHistory> getHistory() {
         return history;
+    }
+
+    public String getUUID() {
+        return UUID;
+    }
+
+    public String getCookie() {
+        return cookie;
     }
 
     public void setIpAddress(String ipAddress) {
@@ -81,4 +91,11 @@ public class Visitor {
         this.history = history;
     }
 
+    public void setUUID(String UUID) {
+        this.UUID = UUID;
+    }
+
+    public void setCookie(String cookie) {
+        this.cookie = cookie;
+    }
 }

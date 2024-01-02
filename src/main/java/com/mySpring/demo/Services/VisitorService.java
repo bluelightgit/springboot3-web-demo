@@ -53,6 +53,8 @@ public class VisitorService {
             visitor.setDeviceType(visitorDetails.getDeviceType());
             visitor.setNewsId(visitorDetails.getNewsId());
             visitor.setTimeStamp(visitorDetails.getTimeStamp());
+            visitor.setUUID(visitorDetails.getUUID());
+            visitor.setCookie(visitorDetails.getCookie());
             VisitorService visitorService = new VisitorService();
             visitorService.addToHistory(visitorDetails);
             return visitorRepository.save(visitor);

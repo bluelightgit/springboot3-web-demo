@@ -53,13 +53,16 @@ public class TestApplication {
         Visitor visitor = new Visitor();
         visitor.setDeviceInfo(0L);
         visitor.setIpAddress("0.0.0.0");
-        visitor.setTimeStamp(0L);
+        visitor.setTimeStamp(1L);
         visitor.setDeviceType("pc");
-        visitor.setNewsId(0L);
+        visitor.setNewsId(1L);
         List<VisitorHistory> historyList = new ArrayList<>();
         VisitorHistory visitorHistory = new VisitorHistory();
-        visitorHistory.addTimeAndNews(0L, 0L);
+        visitorHistory.addTimeAndNews(1L, 1L);
         historyList.add(visitorHistory);
+        visitor.setHistory(historyList);
+        visitor.setCookie("testCookie");
+        visitor.setUUID("testUUID");
         visitorService.createVisitor(visitor);
 
     }

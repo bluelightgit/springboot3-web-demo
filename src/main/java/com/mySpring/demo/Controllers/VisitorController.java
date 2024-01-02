@@ -26,7 +26,7 @@ public class VisitorController {
     }
 
     @GetMapping("/visitors/{deviceInfo}")
-    public Visitor getVisitor(@RequestBody String deviceInfo) {
+    public Visitor getVisitor(@RequestBody Long deviceInfo) {
         return visitorService.getVisitor(deviceInfo);
     }
 }

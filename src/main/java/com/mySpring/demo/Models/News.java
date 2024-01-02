@@ -3,6 +3,9 @@ package com.mySpring.demo.Models;
 import java.util.List;
 
 // import org.springframework.data.annotation.Id;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.annotation.LastModifiedBy;
 
 import jakarta.persistence.ElementCollection;
@@ -28,6 +31,7 @@ public class News {
     private Long publishTime;
     private String content;
     private String imageUrl;
+
     // @Lob
     // private byte[] image;
 
