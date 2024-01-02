@@ -3,6 +3,8 @@ package com.mySpring.demo.Models;
 import java.util.HashMap;
 import java.util.List;
 
+import com.mySpring.demo.Utils.TextFormatDetector;
+
 import jakarta.annotation.Generated;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -18,7 +20,7 @@ public class Visitor {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String deviceInfo; // equals to id
+    private Long deviceInfo; // equals to id
     private String ipAddress;
     private String deviceType; // mobile, desktop
     private Long NewsId;
@@ -35,7 +37,7 @@ public class Visitor {
         return deviceType;
     }
 
-    public String getDeviceInfo() {
+    public Long getDeviceInfo() {
         return deviceInfo;
     }
 
@@ -52,14 +54,18 @@ public class Visitor {
     }
 
     public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
+        if (ipAddress == null || !TextFormatDetector.isIpAddress(ipAddress)) {
+            this.ipAddress = "";
+        } else {
+            this.ipAddress = ipAddress;
+        }
     }
 
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
     }
 
-    public void setDeviceInfo(String deviceInfo) {
+    public void setDeviceInfo(Long deviceInfo) {
         this.deviceInfo = deviceInfo;
     }
 

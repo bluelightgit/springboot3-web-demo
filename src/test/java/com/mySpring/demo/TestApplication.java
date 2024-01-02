@@ -16,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import com.mySpring.demo.Utils.ImageTransformer;
 import com.mySpring.demo.Models.News;
 import com.mySpring.demo.Models.Visitor;
+import com.mySpring.demo.Models.VisitorHistory;
 import com.mySpring.demo.Services.NewsService;
 import com.mySpring.demo.Services.VisitorService;
 
@@ -29,9 +30,9 @@ public class TestApplication {
     private VisitorService visitorService;
 
     @Test
-    public void testServices() throws IOException {
+    public void testNewsService() throws IOException {
         News news = new News();
-        news.setId(0L);
+        news.setId(1L);
         news.setTitle("testTitle");
         news.setContent("testContent");
         news.setUrl("testUrl");
@@ -43,12 +44,22 @@ public class TestApplication {
         news.setImageUrl("src\\main\\resources\\testImage.png");
         newsService.createNews(news);
 
+
+    }
+
+    @Test
+    public void TestVisitorService() throws IOException {
+
         Visitor visitor = new Visitor();
-        visitor.setDeviceInfo("testDeviceInfo");
+        visitor.setDeviceInfo(0L);
         visitor.setIpAddress("0.0.0.0");
         visitor.setTimeStamp(0L);
         visitor.setDeviceType("pc");
         visitor.setNewsId(0L);
+        List<VisitorHistory> historyList = new ArrayList<>();
+        VisitorHistory visitorHistory = new VisitorHistory();
+        visitorHistory.addTimeAndNews(0L, 0L);
+        historyList.add(visitorHistory);
         visitorService.createVisitor(visitor);
 
     }

@@ -1,9 +1,11 @@
 package com.mySpring.demo.Services;
 
+import com.mySpring.demo.Models.News;
 import com.mySpring.demo.Models.Visitor;
 import com.mySpring.demo.Repositories.VisitorRepository;
 import com.mySpring.demo.Models.VisitorHistory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,27 +24,37 @@ public class VisitorService {
         return visitorRepository.findAll();
     }
 
-    public Visitor getVisitor(String deviceInfo) {
-        Visitor visitor = visitorRepository.findByDeviceInfo(deviceInfo);
-        if (visitor != null) {
-            return visitor;
-        } else {
-            return null;
-        }
+    public Visitor getVisitor(Long deviceInfo) {
+        Optional<Visitor> visitor =  visitorRepository.findById(deviceInfo);
+        return visitor.orElse(null);
     }
 
     public Visitor createVisitor(Visitor visitor) {
+        // try {
+        //     String deviceInfo = visitor.getDeviceInfo();
+        //     if (deviceInfo == null || deviceInfo.isEmpty()) {
+        //         throw new IllegalArgumentException("Device info cannot be null or empty");
+        //     }
+        // } catch (IllegalArgumentException e) {
+        //     System.out.println("Error: " + e.getMessage());
+        //     throw e;
+        // }
+        // return visitorRepository.save(visitor);
         return visitorRepository.save(visitor);
     }
 
-    public Visitor updateVisitor(String deviceInfo, Visitor visitorDetails) {
-        Visitor visitor = visitorRepository.findByDeviceInfo(deviceInfo);
-        if (visitor != null) {
+    public Visitor updateVisitor(Long deviceInfo, Visitor visitorDetails) {
+        Optional<Visitor> Optionalvisitor = visitorRepository.findById(deviceInfo);
+        // Visitor visitor = visitorRepository.findByDeviceInfo(deviceInfo);
+        if (Optionalvisitor.isPresent()) {
+            Visitor visitor = Optionalvisitor.get();
             visitor.setDeviceInfo(deviceInfo);
             visitor.setIpAddress(visitorDetails.getIpAddress());
             visitor.setDeviceType(visitorDetails.getDeviceType());
             visitor.setNewsId(visitorDetails.getNewsId());
             visitor.setTimeStamp(visitorDetails.getTimeStamp());
+            VisitorService visitorService = new VisitorService();
+            visitorService.addToHistory(visitorDetails);
             return visitorRepository.save(visitor);
         } else {
             return null;
@@ -50,8 +62,8 @@ public class VisitorService {
 
     }
 
-    public void deleteVisitor(String id) {
-        visitorRepository.deleteByDeviceInfo(id);
+    public void deleteVisitor(Long id) {
+        visitorRepository.deleteById(id);
     }
 
     public void addToHistory(Visitor visitor) {
