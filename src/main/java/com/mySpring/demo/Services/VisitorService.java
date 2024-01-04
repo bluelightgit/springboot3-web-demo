@@ -12,9 +12,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
+@CacheConfig(cacheNames = "visitor")
 public class VisitorService {
 
     @Autowired
@@ -24,8 +27,9 @@ public class VisitorService {
         return visitorRepository.findAll();
     }
 
-    public Visitor getVisitor(Long deviceInfo) {
-        Optional<Visitor> visitor =  visitorRepository.findById(deviceInfo);
+    @Cacheable
+    public Visitor getVisitor(Long UUID) {
+        Optional<Visitor> visitor =  visitorRepository.findById(UUID);
         return visitor.orElse(null);
     }
 
@@ -55,8 +59,8 @@ public class VisitorService {
             visitor.setTimeStamp(visitorDetails.getTimeStamp());
             visitor.setUUID(visitorDetails.getUUID());
             visitor.setCookie(visitorDetails.getCookie());
-            VisitorService visitorService = new VisitorService();
-            visitorService.addToHistory(visitorDetails);
+            // VisitorService visitorService = new VisitorService();
+            // visitorService.addToHistory(visitorDetails);
             return visitorRepository.save(visitor);
         } else {
             return null;
@@ -68,15 +72,15 @@ public class VisitorService {
         visitorRepository.deleteById(id);
     }
 
-    public void addToHistory(Visitor visitor) {
-        // List<VisitorHistory> 用户所有历史
-        List<VisitorHistory> history = visitor.getHistory();
-        // VisitorHistory 用户当前历史
-        VisitorHistory newHistory = new VisitorHistory();
-        newHistory.addTimeAndNews(visitor.getTimeStamp(), visitor.getNewsId());
-        history.add(newHistory);
-        visitor.setHistory(history);
-        visitorRepository.save(visitor);
-    }
+    // public void addToHistory(Visitor visitor) {
+    //     // List<VisitorHistory> 用户所有历史
+    //     List<VisitorHistory> history = visitor.getHistory();
+    //     // VisitorHistory 用户当前历史
+    //     VisitorHistory newHistory = new VisitorHistory();
+    //     newHistory.addTimeAndNews(visitor.getTimeStamp(), visitor.getNewsId());
+    //     history.add(newHistory);
+    //     visitor.setHistory(history);
+    //     visitorRepository.save(visitor);
+    // }
     
 }

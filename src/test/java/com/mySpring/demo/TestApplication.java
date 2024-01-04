@@ -56,11 +56,11 @@ public class TestApplication {
         visitor.setTimeStamp(1L);
         visitor.setDeviceType("pc");
         visitor.setNewsId(1L);
-        List<VisitorHistory> historyList = new ArrayList<>();
-        VisitorHistory visitorHistory = new VisitorHistory();
-        visitorHistory.addTimeAndNews(1L, 1L);
-        historyList.add(visitorHistory);
-        visitor.setHistory(historyList);
+        // List<VisitorHistory> historyList = new ArrayList<>();
+        // VisitorHistory visitorHistory = new VisitorHistory();
+        // visitorHistory.addTimeAndNews(1L, 1L);
+        // historyList.add(visitorHistory);
+        // visitor.setHistory(historyList);
         visitor.setCookie("testCookie");
         visitor.setUUID("testUUID");
         visitorService.createVisitor(visitor);

@@ -47,10 +47,10 @@ public class NewsController {
         newsService.deleteNews(id);
     }
 
-    // @GetMapping("/recommendation")
-    // public List<News> getRecommendation() {
-    //     return newsService.getRecommendation();
-    // }
+    @GetMapping("/recommendation")
+    public List<News> getRecommendation() {
+        return newsService.getHotestOfToday();
+    }
 
     
 }

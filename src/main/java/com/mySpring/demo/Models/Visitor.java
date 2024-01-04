@@ -28,8 +28,8 @@ public class Visitor {
     // private HashMap<Long, Long> history; // key: timestamp, value: newsId
     private String UUID;
     private String cookie;
-    @ElementCollection
-    private List<VisitorHistory> history;
+    // @ElementCollection
+    // private List<VisitorHistory> history;
 
     public String getIpAddress() {
         return ipAddress;
@@ -51,9 +51,9 @@ public class Visitor {
         return timeStamp;
     }
 
-    public List<VisitorHistory> getHistory() {
-        return history;
-    }
+    // public List<VisitorHistory> getHistory() {
+    //     return history;
+    // }
 
     public String getUUID() {
         return UUID;
@@ -87,9 +87,9 @@ public class Visitor {
         this.timeStamp = timeStamp;
     }
 
-    public void setHistory(List<VisitorHistory> history) {
-        this.history = history;
-    }
+    // public void setHistory(List<VisitorHistory> history) {
+    //     this.history = history;
+    // }
 
     public void setUUID(String UUID) {
         this.UUID = UUID;

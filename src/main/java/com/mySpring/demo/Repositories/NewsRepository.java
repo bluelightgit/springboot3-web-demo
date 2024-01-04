@@ -16,4 +16,10 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     @Query("SELECT n FROM News n WHERE n.id IN :ids")
     List<News> findAllByIds(@Param("ids") List<Long> ids);
     
+    @Query(value = "SELECT * FROM news ORDER BY publish_time DESC LIMIT 10", nativeQuery = true)
+    List<News> findTop10ByOrderByPublishTimeDesc();
+
+    // 某一时间段内观看数最高的news
+    @Query(value = "SELECT * FROM news WHERE publish_time BETWEEN ?1 AND ?2 ORDER BY views DESC LIMIT 10", nativeQuery = true)
+    List<News> findTop10ByPublishTimeBetweenOrderByViewsDesc(Long startTime, Long endTime);
 }

@@ -31,6 +31,7 @@ public class News {
     private Long publishTime;
     private String content;
     private String imageUrl;
+    private Long views;
 
     // @Lob
     // private byte[] image;
@@ -66,6 +67,10 @@ public class News {
         return publishTime;
     }
 
+    public Long getViews() {
+        return views;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -92,6 +97,10 @@ public class News {
 
     public void setPublishTime(Long publishTime) {
         this.publishTime = publishTime;
+    }
+
+    public void setViews(Long views) {
+        this.views = views;
     }
 
 
