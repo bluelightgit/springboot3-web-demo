@@ -1,16 +1,16 @@
 server:
-  port: 8082
+  port: 8085
   servlet:
-    context-path: /hello-world-new
+    context-path: 
 
-spring:
-  cache:
-    type: ehcache
-    config: classpath:ehcache.xml
+# spring:
+#   cache:
+#     type: ehcache
+#     config: classpath:ehcache.xml
 
-  #RabbitMQ服务器配置，地址账号密码，virtualhost等配置
-  rabbitmq:
-    addresses: localhost:15672
-    username: user
-    password: admin
-    virtual-host: 
+#   #RabbitMQ服务器配置，地址账号密码，virtualhost等配置
+#   rabbitmq:
+#     addresses: localhost:15672
+#     username: user
+#     password: admin
+#     virtual-host: 

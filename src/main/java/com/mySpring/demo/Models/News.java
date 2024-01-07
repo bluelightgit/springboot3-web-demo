@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.annotation.LastModifiedBy;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,16 +24,22 @@ public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ElementCollection
-    private List<String> tag;
-    
+    // @ElementCollection
+    // private List<String> tag;
+
     private String url;
     private String title;
     private Long publishTime;
-    private String content;
     private String imageUrl;
     private Long views;
 
+    @Lob
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String tag;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String content;
     // @Lob
     // private byte[] image;
 
@@ -51,7 +58,7 @@ public class News {
         return title;
     }
 
-    public List<String> getTag() {
+    public String getTag() {
         return tag;
     }
 
@@ -83,7 +90,7 @@ public class News {
         this.title = title;
     }
 
-    public void setTag(List<String> tag) {
+    public void setTag(String tag) {
         this.tag = tag;
     }
 

@@ -62,7 +62,7 @@ public class NewsService implements INewsService {
      */
     public List<News> getHotestOfToday() {
         Long NowTimeStamp = System.currentTimeMillis();
-        List<News> hotestOfToday = newsRepository.findTop10ByPublishTimeBetweenOrderByViewsDesc(NowTimeStamp - 86400000, NowTimeStamp);
+        List<News> hotestOfToday = newsRepository.findTopNByPublishTimeBetweenOrderByViewsDesc(NowTimeStamp - 86400 * 7, NowTimeStamp, 20);
 
         return hotestOfToday;
     }

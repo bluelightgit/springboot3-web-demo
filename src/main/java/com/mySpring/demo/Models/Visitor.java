@@ -27,7 +27,7 @@ public class Visitor {
     private Long timeStamp;
     // private HashMap<Long, Long> history; // key: timestamp, value: newsId
     private String UUID;
-    private String cookie;
+    // private String cookie;
     // @ElementCollection
     // private List<VisitorHistory> history;
 
@@ -59,9 +59,9 @@ public class Visitor {
         return UUID;
     }
 
-    public String getCookie() {
-        return cookie;
-    }
+    // public String getCookie() {
+    //     return cookie;
+    // }
 
     public void setIpAddress(String ipAddress) {
         if (ipAddress == null || !TextFormatDetector.isIpAddress(ipAddress)) {
@@ -95,7 +95,7 @@ public class Visitor {
         this.UUID = UUID;
     }
 
-    public void setCookie(String cookie) {
-        this.cookie = cookie;
-    }
+    // public void setCookie(String cookie) {
+    //     this.cookie = cookie;
+    // }
 }

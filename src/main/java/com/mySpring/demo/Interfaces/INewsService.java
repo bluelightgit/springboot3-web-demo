@@ -11,4 +11,5 @@ public interface INewsService {
     News createNews(News news);
     News updateNews(Long id, News newsDetails);
     void deleteNews(Long id);
+    List<News> getHotestOfToday();
 }

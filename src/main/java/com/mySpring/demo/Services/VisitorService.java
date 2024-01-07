@@ -58,7 +58,7 @@ public class VisitorService {
             visitor.setNewsId(visitorDetails.getNewsId());
             visitor.setTimeStamp(visitorDetails.getTimeStamp());
             visitor.setUUID(visitorDetails.getUUID());
-            visitor.setCookie(visitorDetails.getCookie());
+            // visitor.setCookie(visitorDetails.getCookie());
             // VisitorService visitorService = new VisitorService();
             // visitorService.addToHistory(visitorDetails);
             return visitorRepository.save(visitor);
@@ -70,6 +70,15 @@ public class VisitorService {
 
     public void deleteVisitor(Long id) {
         visitorRepository.deleteById(id);
+    }
+
+    public boolean checkUUID(String UUID) {
+        Visitor visitor = visitorRepository.findByUUID(UUID);
+        if (visitor == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     // public void addToHistory(Visitor visitor) {

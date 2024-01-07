@@ -11,5 +11,6 @@
     "java.debug.settings.onBuildFailureProceed": true,
     "files.watcherExclude": {
         "**/target": true
-    }
+    },
+    "julia.environmentPath": "e:\\java_test\\demo"
 }
