@@ -61,7 +61,7 @@ public class NewsService implements INewsService {
      * 获取24h内浏览量最高的10篇新闻(解决冷启动问题)
      */
     public List<News> getHotestOfToday() {
-        Long NowTimeStamp = System.currentTimeMillis();
+        Long NowTimeStamp = System.currentTimeMillis() / 1000;
         List<News> hotestOfToday = newsRepository.findTopNByPublishTimeBetweenOrderByViewsDesc(NowTimeStamp - 86400 * 7, NowTimeStamp, 20);
 
         return hotestOfToday;

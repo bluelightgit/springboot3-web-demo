@@ -26,12 +26,17 @@ public class News {
     private Long id;
     // @ElementCollection
     // private List<String> tag;
-
-    private String url;
     private String title;
     private Long publishTime;
-    private String imageUrl;
     private Long views;
+
+    @Lob
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String url;
+
+    @Lob
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String imageUrl;
 
     @Lob
     @Column(columnDefinition = "MEDIUMTEXT")

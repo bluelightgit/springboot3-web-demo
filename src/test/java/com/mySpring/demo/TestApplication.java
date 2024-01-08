@@ -68,5 +68,11 @@ public class TestApplication {
 
     }
 
+    @Test
+    public void TestRecommendation() throws IOException {
+        Long NowTimeStamp = System.currentTimeMillis();
+        System.out.println(NowTimeStamp);
+    }
+
     
 }

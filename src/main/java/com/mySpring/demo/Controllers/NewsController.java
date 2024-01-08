@@ -78,6 +78,7 @@ public class NewsController {
         return newsService.getHotestOfToday();
     }
 
+    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @RequestMapping("/getUUID")
     public void getVisitorUUID(HttpServletRequest request, HttpServletResponse response) {
         CookieFunction cookieFunction = new CookieFunction();
