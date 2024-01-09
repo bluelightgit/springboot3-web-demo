@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                         authorize.requestMatchers("/**").permitAll())
                 .httpBasic(withDefaults())
+                .csrf().disable()
                 .build();
     }
 }

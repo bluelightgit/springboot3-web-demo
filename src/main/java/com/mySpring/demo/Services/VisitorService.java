@@ -34,22 +34,12 @@ public class VisitorService {
     }
 
     public Visitor createVisitor(Visitor visitor) {
-        // try {
-        //     String deviceInfo = visitor.getDeviceInfo();
-        //     if (deviceInfo == null || deviceInfo.isEmpty()) {
-        //         throw new IllegalArgumentException("Device info cannot be null or empty");
-        //     }
-        // } catch (IllegalArgumentException e) {
-        //     System.out.println("Error: " + e.getMessage());
-        //     throw e;
-        // }
-        // return visitorRepository.save(visitor);
+
         return visitorRepository.save(visitor);
     }
 
     public Visitor updateVisitor(Long deviceInfo, Visitor visitorDetails) {
         Optional<Visitor> Optionalvisitor = visitorRepository.findById(deviceInfo);
-        // Visitor visitor = visitorRepository.findByDeviceInfo(deviceInfo);
         if (Optionalvisitor.isPresent()) {
             Visitor visitor = Optionalvisitor.get();
             visitor.setDeviceInfo(deviceInfo);
@@ -58,9 +48,6 @@ public class VisitorService {
             visitor.setNewsId(visitorDetails.getNewsId());
             visitor.setTimeStamp(visitorDetails.getTimeStamp());
             visitor.setUUID(visitorDetails.getUUID());
-            // visitor.setCookie(visitorDetails.getCookie());
-            // VisitorService visitorService = new VisitorService();
-            // visitorService.addToHistory(visitorDetails);
             return visitorRepository.save(visitor);
         } else {
             return null;
