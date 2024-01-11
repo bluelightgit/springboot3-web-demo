@@ -22,8 +22,8 @@ public class SecurityConfig {
     @Bean
     UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager users = new InMemoryUserDetailsManager();
-        users.createUser(User.withUsername("aaa")
-                .password(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("bbb"))
+        users.createUser(User.withUsername("admin")
+                .password(PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("admin"))
                 .authorities(ACCOUNT_CLIENT_AUTHORITY).build());
         return users;
     }

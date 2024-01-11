@@ -17,6 +17,6 @@ public class OpenAPIConfig {
                         .version("v1"))
                 .externalDocs(new ExternalDocumentation()
                         .description("项目API文档")
-                        .url("/"));
+                        .url("/api-docs"));
     }
 }

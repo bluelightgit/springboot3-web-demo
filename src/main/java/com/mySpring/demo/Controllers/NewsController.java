@@ -81,7 +81,7 @@ public class NewsController {
 
     @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @RequestMapping("/getUUID")
-    public void getVisitorUUID(HttpServletRequest request, HttpServletResponse response) {
+    public String getVisitorUUID(HttpServletRequest request, HttpServletResponse response) {
         CookieFunction cookieFunction = new CookieFunction();
         String uuid = cookieFunction.getCookie(request);
         if (uuid == null || visitorService.checkUUID(uuid) == false) {
@@ -89,6 +89,7 @@ public class NewsController {
             uuid = uuidFunction.setUUID();
             cookieFunction.setCookie(response, uuid);
         }
+        return uuid;
 
     }
     
