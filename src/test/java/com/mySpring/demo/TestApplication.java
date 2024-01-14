@@ -4,20 +4,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mySpring.demo.Recommendation.Recommendation;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.*;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
 
 /*
  * springboot测试类
  */
-import com.mySpring.demo.Utils.ImageTransformer;
-import com.mySpring.demo.Utils.UUIDFunction;
 import com.mySpring.demo.Models.News;
 import com.mySpring.demo.Models.Visitor;
-import com.mySpring.demo.Models.VisitorHistory;
 import com.mySpring.demo.Services.NewsService;
 import com.mySpring.demo.Services.VisitorService;
 
@@ -56,22 +53,23 @@ public class TestApplication {
         visitor.setIpAddress("0.0.0.0");
         visitor.setTimeStamp(1L);
         visitor.setDeviceType("pc");
-        visitor.setNewsId(1L);
-        // List<VisitorHistory> historyList = new ArrayList<>();
-        // VisitorHistory visitorHistory = new VisitorHistory();
-        // visitorHistory.addTimeAndNews(1L, 1L);
-        // historyList.add(visitorHistory);
-        // visitor.setHistory(historyList);
-        String testUUID = new UUIDFunction().setUUID();
-        visitor.setUUID(testUUID);
+        visitor.setNewsId(725L);
+        // String testUUID = new UUIDFunction().setUUID();
+        visitor.setUUID("81d799c2-0b1e-4e6c-a0b2-8cddbe2439ce");
         visitorService.createVisitor(visitor);
 
     }
 
+    @Autowired
+    private Recommendation recommendation;
+
     @Test
     public void TestRecommendation() throws IOException {
-        Long NowTimeStamp = System.currentTimeMillis();
-        System.out.println(NowTimeStamp);
+        String testUUID = "81d799c2-0b1e-4e6c-a0b2-8cddbe2439ce";
+        List<News> newsList = recommendation.getRecommendedNews(testUUID);
+        for (News news : newsList) {
+            System.out.println(news.getTitle());
+        }
     }
 
     

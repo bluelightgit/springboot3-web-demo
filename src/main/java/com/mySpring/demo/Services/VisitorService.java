@@ -17,7 +17,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-@CacheConfig(cacheNames = "visitor")
 public class VisitorService {
 
     @Autowired
@@ -27,10 +26,13 @@ public class VisitorService {
         return visitorRepository.findAll();
     }
 
-    @Cacheable
-    public Visitor getVisitor(Long UUID) {
-        Optional<Visitor> visitor =  visitorRepository.findById(UUID);
+    public Visitor getVisitor(Long deviceInfo) {
+        Optional<Visitor> visitor =  visitorRepository.findById(deviceInfo);
         return visitor.orElse(null);
+    }
+
+    public List<Visitor> getVisitorByUUID(String UUID) {
+        return visitorRepository.getHistoryByUUID(UUID);
     }
 
     public Visitor createVisitor(Visitor visitor) {
@@ -60,7 +62,7 @@ public class VisitorService {
     }
 
     public boolean checkUUID(String UUID) {
-        Visitor visitor = visitorRepository.findByUUID(UUID);
+        List<Visitor> visitor = visitorRepository.getHistoryByUUID(UUID);
         if (visitor == null) {
             return false;
         } else {

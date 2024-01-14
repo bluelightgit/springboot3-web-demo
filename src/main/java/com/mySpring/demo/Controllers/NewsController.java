@@ -1,8 +1,10 @@
 package com.mySpring.demo.Controllers;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
+
+import com.mySpring.demo.Recommendation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,7 +27,7 @@ import com.mySpring.demo.Utils.UUIDFunction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@CrossOrigin
+// @CrossOrigin
 @RestController
 @RequestMapping("/news")
 public class NewsController {
@@ -35,6 +37,9 @@ public class NewsController {
 
     @Autowired
     private VisitorService visitorService;
+
+    @Autowired
+    private Recommendation recommendation;
 
     @GetMapping
     public List<News> getAllNews() {
@@ -74,12 +79,13 @@ public class NewsController {
 
     // 获取用户的新闻推荐
     @GetMapping("/visitor/{UUID}/recommendation")
-    public List<News> getUserRecommendation(@PathVariable String UUID) {
-        // return newsService.getUserRecommendation(UUID);
-        return newsService.getHotestOfToday();
+    public List<News> getUserRecommendation(@PathVariable String UUID) throws IOException {
+//        List<Visitor> history = visitorService.getVisitorByUUID(UUID);
+
+        return recommendation.getRecommendedNews(UUID);
     }
 
-    @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+    // @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @RequestMapping("/getUUID")
     public String getVisitorUUID(HttpServletRequest request, HttpServletResponse response) {
         CookieFunction cookieFunction = new CookieFunction();
