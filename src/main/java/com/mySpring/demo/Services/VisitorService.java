@@ -26,6 +26,7 @@ public class VisitorService {
         return visitorRepository.findAll();
     }
 
+    @Cacheable(value = "visitor", key = "#deviceInfo")
     public Visitor getVisitor(Long deviceInfo) {
         Optional<Visitor> visitor =  visitorRepository.findById(deviceInfo);
         return visitor.orElse(null);
@@ -70,15 +71,9 @@ public class VisitorService {
         }
     }
 
-    // public void addToHistory(Visitor visitor) {
-    //     // List<VisitorHistory> 用户所有历史
-    //     List<VisitorHistory> history = visitor.getHistory();
-    //     // VisitorHistory 用户当前历史
-    //     VisitorHistory newHistory = new VisitorHistory();
-    //     newHistory.addTimeAndNews(visitor.getTimeStamp(), visitor.getNewsId());
-    //     history.add(newHistory);
-    //     visitor.setHistory(history);
-    //     visitorRepository.save(visitor);
-    // }
+    @Cacheable(value = "visitorHistory", key = "#UUID")
+    public List<Visitor> getHistory(String UUID) {
+        return visitorRepository.getHistoryByUUID(UUID);
+    }
     
 }

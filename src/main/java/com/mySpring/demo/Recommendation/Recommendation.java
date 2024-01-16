@@ -4,6 +4,9 @@ import com.mySpring.demo.Models.News;
 import com.mySpring.demo.Models.Visitor;
 import com.mySpring.demo.Repositories.NewsRepository;
 import com.mySpring.demo.Repositories.VisitorRepository;
+import com.mySpring.demo.Services.NewsService;
+import com.mySpring.demo.Services.VisitorService;
+
 import org.deeplearning4j.text.tokenization.tokenizer.preprocessor.CommonPreprocessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +29,7 @@ import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 public class Recommendation {
 
     @Autowired
-    VisitorRepository visitorRepository;
+    VisitorService visitorService;
 
     @Autowired
     NewsRepository newsRepository;
@@ -34,7 +37,7 @@ public class Recommendation {
     public List<News> getRecommendedNews(String uuid) throws IOException {
         // 获取用户的历史记录
 //        String uuid = visitor.getUUID();
-        List<Visitor> history = visitorRepository.getHistoryByUUID(uuid);
+        List<Visitor> history = visitorService.getHistory(uuid);
         List<Long> newsIdList = new ArrayList<>();
         for (Visitor visitorHistory : history) {
             newsIdList.add(visitorHistory.getNewsId());
@@ -53,7 +56,7 @@ public class Recommendation {
         t.setTokenPreProcessor(new CommonPreprocessor());
         Word2Vec vec = new Word2Vec.Builder()
                 .minWordFrequency(1)
-                .iterations(1)
+                .iterations(5)
                 .layerSize(256)
                 .seed(2)
                 .windowSize(5)
@@ -75,7 +78,7 @@ public class Recommendation {
         // 根据相似度排序，选择最相似的新闻推荐给用户
         List<News> recommendedNews = similarityScores.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(10)
+                .limit(20)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 

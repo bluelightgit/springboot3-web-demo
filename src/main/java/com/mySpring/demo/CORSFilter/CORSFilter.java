@@ -22,7 +22,7 @@ public class CORSFilter implements Filter {
      
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        System.out.println("init filter...");
+        // System.out.println("init filter...");
     }
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -39,6 +39,6 @@ public class CORSFilter implements Filter {
     }
     @Override
     public void destroy() {
-        System.out.println("destroy filter...");
+        // System.out.println("destroy filter...");
     }
 }

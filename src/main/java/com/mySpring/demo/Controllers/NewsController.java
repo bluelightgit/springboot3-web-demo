@@ -27,7 +27,6 @@ import com.mySpring.demo.Utils.UUIDFunction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-// @CrossOrigin
 @RestController
 @RequestMapping("/news")
 public class NewsController {
@@ -71,11 +70,6 @@ public class NewsController {
         return newsService.getHotestOfToday();
     }
 
-    // 记录用户阅读新闻的行为
-    // @PostMapping("/visitor/{UUID}/read/{newsId}")
-    // public void recordUserReadNews(@PathVariable String UUID, @PathVariable Long newsId) {
-    //     newsService.recordUserReadNews(UUID, newsId);
-    // }
 
     // 获取用户的新闻推荐
     @GetMapping("/visitor/{UUID}/recommendation")
@@ -85,7 +79,6 @@ public class NewsController {
         return recommendation.getRecommendedNews(UUID);
     }
 
-    // @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
     @RequestMapping("/getUUID")
     public String getVisitorUUID(HttpServletRequest request, HttpServletResponse response) {
         CookieFunction cookieFunction = new CookieFunction();

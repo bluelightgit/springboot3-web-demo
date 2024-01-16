@@ -11,15 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mySpring.demo.Models.Visitor;
 import com.mySpring.demo.Services.VisitorService;
 
-// @CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
-// @CrossOrigin
 @RestController
 public class VisitorController {
     
     @Autowired
     private VisitorService visitorService;
 
-    // @CrossOrigin(origins = "http://localhost:5173", methods = {RequestMethod.POST, RequestMethod.GET}, allowCredentials = "true")
     @PostMapping("/visitors")
     public Visitor createVisitor(@RequestBody Visitor visitor) {
         return visitorService.createVisitor(visitor);
