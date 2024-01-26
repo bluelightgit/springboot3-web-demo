@@ -49,13 +49,13 @@ public class TestApplication {
     public void TestVisitorService() throws IOException {
 
         Visitor visitor = new Visitor();
-        visitor.setDeviceInfo(0L);
+        visitor.setId(0L);
         visitor.setIpAddress("0.0.0.0");
         visitor.setTimeStamp(1L);
         visitor.setDeviceType("pc");
         visitor.setNewsId(725L);
         // String testUUID = new UUIDFunction().setUUID();
-        visitor.setUUID("81d799c2-0b1e-4e6c-a0b2-8cddbe2439ce");
+        visitor.setUUID("testUUID");
         visitorService.createVisitor(visitor);
 
     }
@@ -65,11 +65,16 @@ public class TestApplication {
 
     @Test
     public void TestRecommendation() throws IOException {
-        String testUUID = "81d799c2-0b1e-4e6c-a0b2-8cddbe2439ce";
+        String testUUID = "testUUID";
         List<News> newsList = recommendation.getRecommendedNews(testUUID);
         for (News news : newsList) {
             System.out.println(news.getTitle());
         }
+    }
+
+    @Test
+    public void DeleteDuplicateNews() {
+        newsService.deleteDuplicateNews();
     }
 
     

@@ -5,9 +5,10 @@ import java.util.List;
 
 
 import com.mySpring.demo.Recommendation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,8 @@ public class NewsController {
     @Autowired
     private Recommendation recommendation;
 
+    private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
+
     @GetMapping
     public List<News> getAllNews() {
         return newsService.getAllNews();
@@ -65,9 +68,14 @@ public class NewsController {
         newsService.deleteNews(id);
     }
 
-    @GetMapping("/recommendation")
+    @GetMapping("/hottest")
     public List<News> getRecommendation() {
-        return newsService.getHotestOfToday();
+        List<News> news = newsService.getHottestOfWeek();
+        if (news == null || news.isEmpty()) {
+            logger.warn("Hot news not found");
+            return null;
+        }
+        return newsService.getHottestOfWeek();
     }
 
 
@@ -75,8 +83,11 @@ public class NewsController {
     @GetMapping("/visitor/{UUID}/recommendation")
     public List<News> getUserRecommendation(@PathVariable String UUID) throws IOException {
 //        List<Visitor> history = visitorService.getVisitorByUUID(UUID);
-
-        return recommendation.getRecommendedNews(UUID);
+        if (visitorService.checkUUID(UUID)) {
+            return recommendation.getRecommendedNews(UUID);
+        } else {
+            return newsService.getHottestOfWeek();
+        }
     }
 
     @RequestMapping("/getUUID")
@@ -86,10 +97,21 @@ public class NewsController {
         if (uuid == null || visitorService.checkUUID(uuid) == false) {
             UUIDFunction uuidFunction = new UUIDFunction();
             uuid = uuidFunction.setUUID();
+            logger.info("Create new UUID: [{}]", uuid);
             cookieFunction.setCookie(response, uuid);
         }
         return uuid;
 
+    }
+
+    @PostMapping("/addView")
+    public void addView(@RequestBody Long id) {
+        newsService.addView(id);
+    }
+
+    @PostMapping("/addView/{id}")
+    public void addView2(@PathVariable Long id) {
+        newsService.addView(id);
     }
     
     @PostMapping("/test-request")

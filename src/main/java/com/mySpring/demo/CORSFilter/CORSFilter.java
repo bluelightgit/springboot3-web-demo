@@ -35,7 +35,7 @@ public class CORSFilter implements Filter {
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type,Access-Token,Authorization,ybg");
         filterChain.doFilter(servletRequest, servletResponse);
-        System.out.println("filter is working...");
+        // System.out.println("filter is working...");
     }
     @Override
     public void destroy() {

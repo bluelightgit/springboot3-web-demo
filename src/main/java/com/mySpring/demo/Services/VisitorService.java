@@ -1,14 +1,9 @@
 package com.mySpring.demo.Services;
 
-import com.mySpring.demo.Models.News;
 import com.mySpring.demo.Models.Visitor;
 import com.mySpring.demo.Repositories.VisitorRepository;
-import com.mySpring.demo.Models.VisitorHistory;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +21,9 @@ public class VisitorService {
         return visitorRepository.findAll();
     }
 
-    @Cacheable(value = "visitor", key = "#deviceInfo")
-    public Visitor getVisitor(Long deviceInfo) {
-        Optional<Visitor> visitor =  visitorRepository.findById(deviceInfo);
+    @Cacheable(value = "visitor", key = "#id")
+    public Visitor getVisitor(Long id) {
+        Optional<Visitor> visitor =  visitorRepository.findById(id);
         return visitor.orElse(null);
     }
 
@@ -41,11 +36,11 @@ public class VisitorService {
         return visitorRepository.save(visitor);
     }
 
-    public Visitor updateVisitor(Long deviceInfo, Visitor visitorDetails) {
-        Optional<Visitor> Optionalvisitor = visitorRepository.findById(deviceInfo);
+    public Visitor updateVisitor(Long id, Visitor visitorDetails) {
+        Optional<Visitor> Optionalvisitor = visitorRepository.findById(id);
         if (Optionalvisitor.isPresent()) {
             Visitor visitor = Optionalvisitor.get();
-            visitor.setDeviceInfo(deviceInfo);
+            visitor.setId(id);
             visitor.setIpAddress(visitorDetails.getIpAddress());
             visitor.setDeviceType(visitorDetails.getDeviceType());
             visitor.setNewsId(visitorDetails.getNewsId());

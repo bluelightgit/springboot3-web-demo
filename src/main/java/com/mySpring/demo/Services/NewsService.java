@@ -1,11 +1,20 @@
 package com.mySpring.demo.Services;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+import com.mySpring.demo.Recommendation.Recommendation;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.mySpring.demo.Repositories.NewsRepository;
@@ -13,6 +22,8 @@ import com.mySpring.demo.Repositories.VisitorRepository;
 import com.mySpring.demo.Models.News;
 import com.mySpring.demo.Models.Visitor;
 import com.mySpring.demo.Interfaces.INewsService;
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 public class NewsService implements INewsService {
 
@@ -22,10 +33,15 @@ public class NewsService implements INewsService {
     @Autowired
     private VisitorRepository visitorRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(NewsService.class);
+    private Map<Long, Integer> viewsMap = new ConcurrentHashMap<>();
+
+    @Cacheable(value = "allNews")
     public List<News> getAllNews() {
         return newsRepository.findAll();
     }
 
+    @Cacheable(value = "news", key = "#id")
     public News getNews(Long id) {
         Optional<News> news = newsRepository.findById(id);
         return news.orElse(null);
@@ -58,30 +74,53 @@ public class NewsService implements INewsService {
     }
 
     /*
-     * 获取24h内浏览量最高的10篇新闻(解决冷启动问题)
+     * 增加一次浏览量
      */
-    public List<News> getHotestOfToday() {
-        Long NowTimeStamp = System.currentTimeMillis() / 1000;
-        List<News> hotestOfToday = newsRepository.findTopNByPublishTimeBetweenOrderByViewsDesc(NowTimeStamp - 86400 * 7, NowTimeStamp, 20);
+    public void addView(Long id) {
+        News news = getNews(id);
+        if (news != null) {
+            viewsMap.put(id, viewsMap.getOrDefault(id, 0) + 1);
+        }
+    }
 
-        return hotestOfToday;
+    /*
+     * 批量更新views到数据库
+     */
+    @Transactional
+    public void updateViewsToDB() {
+        if (!viewsMap.isEmpty()) {
+            logger.info("Updating views to database, {} items", viewsMap.size());
+        }
+        for (Map.Entry<Long, Integer> entry : viewsMap.entrySet()) {
+            newsRepository.updateViews(entry.getKey(), entry.getValue());
+        }
+        viewsMap.clear();
+    }
+    @Transactional
+    @Scheduled(fixedRate = 1000)  // 每秒执行一次
+    public void scheduledUpdateViews() {
+        updateViewsToDB();
     }
     /*
-     * 根据用户浏览历史记录推荐新闻,
-     * 该案例中使用文本分类算法进行推荐,
-     * 且仅使用新闻title进行分类
+     * 获取一段时间内浏览量最高的10篇新闻(解决冷启动问题)
      */
-    public List<News> getRecommendedNews(Visitor visitor) {
-        // 根据用户的历史记录推荐新闻
-        String uuid = visitor.getUUID();
-        List<Visitor> history = visitorRepository.getHistoryByUUID(uuid);
-        List<Long> newsIdList = new ArrayList<>();
-        for (Visitor visitorHistory : history) {
-            newsIdList.add(visitorHistory.getNewsId());
+//    @Cacheable(value = "hottestNews", key = "#root.methodName")
+    public List<News> getHottestOfWeek() {
+        long NowTimeStamp = System.currentTimeMillis() / 1000;
+        return newsRepository.findTopNByPublishTimeBetweenOrderByViewsDesc(1L, NowTimeStamp, 20);
+    }
+
+    /*
+     * 查找重复的新闻 by title
+     */
+    public List<News> getDuplicateNews() {
+        return newsRepository.findAllDuplicateNews();
+    }
+
+    public void deleteDuplicateNews() {
+        List<News> duplicateNews = getDuplicateNews();
+        for (News news : duplicateNews) {
+            newsRepository.delete(news);
         }
-        // visitor历史记录的详细信息
-        List<News> recommendedNews = newsRepository.findAllByIds(newsIdList);
-        
-        return recommendedNews;
     }
 }

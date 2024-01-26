@@ -11,4 +11,5 @@ public interface IVisitorService {
     Visitor updateVisitor(String id, Visitor visitorDetails);
     void deleteVisitor(String id);
     void addToHistory(News news);
+    List<Visitor> getHistory(String UUID);
 }
