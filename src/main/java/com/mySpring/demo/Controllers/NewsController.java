@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.List;
 
 
+import com.mySpring.demo.Models.NewsES;
 import com.mySpring.demo.Recommendation.*;
+import com.mySpring.demo.Services.NewsESService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class NewsController {
 
     @Autowired
     private Recommendation recommendation;
+
+    @Autowired
+    private NewsESService newsESService;
 
     private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
 
@@ -113,7 +118,12 @@ public class NewsController {
     public void addView2(@PathVariable Long id) {
         newsService.addView(id);
     }
-    
+
+
+    @PostMapping("/search/{keyword}")
+    public List<NewsES> searchNews(@PathVariable String keyword) {
+        return newsESService.findByTitleOrContent(keyword, keyword);
+    }
     @PostMapping("/test-request")
     public ResponseEntity<String> testPostRequest() {
         return ResponseEntity.ok("POST request successful");

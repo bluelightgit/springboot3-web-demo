@@ -31,7 +31,11 @@ public interface NewsRepository extends JpaRepository<News, Long> {
             );""", nativeQuery = true)
     List<News> findAllDuplicateNews();
 
-    // views增加n
+    /**
+     * 更新新闻的观看数
+     * @param id
+     * @param n
+     */
     @Modifying
     @Query(value = "UPDATE news SET views = views + ?2 WHERE id = ?1", nativeQuery = true)
     void updateViews(Long id, Integer n);
@@ -39,7 +43,13 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     @Query(value = "SELECT * FROM news ORDER BY publish_time DESC LIMIT 10", nativeQuery = true)
     List<News> findTop10ByOrderByPublishTimeDesc();
 
-    // 某一时间段内观看数最高的news
+    /**
+     * 获取某个时间段内的新闻
+     * @param startTime
+     * @param endTime
+     * @param n
+     * @return
+     */
     @Query(value = "SELECT * FROM news WHERE publish_time BETWEEN ?1 AND ?2 ORDER BY views DESC LIMIT ?3", nativeQuery = true)
     List<News> findTopNByPublishTimeBetweenOrderByViewsDesc(Long startTime, Long endTime, Integer n);
 }

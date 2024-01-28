@@ -3,10 +3,15 @@ server:
   servlet:
     context-path: 
 
-# spring:
-#   cache:
-#     type: ehcache
-#     config: classpath:ehcache.xml
+spring:
+  elasticsearch:
+    rest:
+        uris: https://localhost:9200
+#        read-timeout: 10000
+#        connection-timeout: 10000
+        username: elastic
+        password: d=ABgcKOKDxmuSWf4_T_
+#        ca-fingerprint: 02D3523FE27FBB1F37E42B43D93A9D8A16A3B7701820B60A7DEF1C52EACD98AB
 
 #   #RabbitMQ服务器配置，地址账号密码，virtualhost等配置
 #   rabbitmq:

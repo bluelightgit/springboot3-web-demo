@@ -13,7 +13,11 @@ import com.mySpring.demo.Models.Visitor;
 public interface VisitorRepository extends JpaRepository<Visitor, Long> {
     
 
-    // 获取某用户的历史记录
+    /**
+     * 根据UUID查询访问历史
+     * @param UUID
+     * @return
+     */
     @Query(value = "SELECT * FROM visitor WHERE UUID = ?1", nativeQuery = true)
     List<Visitor> getHistoryByUUID(String UUID);
 

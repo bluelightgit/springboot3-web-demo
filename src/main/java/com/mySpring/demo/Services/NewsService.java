@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.mySpring.demo.Models.NewsES;
 import com.mySpring.demo.Recommendation.Recommendation;
 
+import com.mySpring.demo.Repositories.NewsESRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -109,6 +111,7 @@ public class NewsService implements INewsService {
         long NowTimeStamp = System.currentTimeMillis() / 1000;
         return newsRepository.findTopNByPublishTimeBetweenOrderByViewsDesc(1L, NowTimeStamp, 20);
     }
+
 
     /*
      * 查找重复的新闻 by title

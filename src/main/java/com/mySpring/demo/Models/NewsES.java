@@ -1,45 +1,37 @@
 package com.mySpring.demo.Models;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
-@Entity
-@Table(name = "news")
-public class News {
+@Document(indexName = "news")
+public class NewsES {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Field(index = false, type = FieldType.Long)
     private Long id;
-    private String title;
-    private Long publishTime;
-    private Long views;
 
-    @Lob
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Field(type = FieldType.Text, analyzer = "ik_smart", searchAnalyzer = "ik_smart", store = true)
+    private String title;
+
+    @Field(type = FieldType.Text, analyzer = "ik_smart", searchAnalyzer = "ik_smart", store = true)
+    private String content;
+
     private String url;
 
-    @Lob
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String imageUrl;
 
-    @Lob
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Field(type = FieldType.Text, analyzer = "ik_max_word")
     private String tag;
 
-    @Lob
-    @Column(columnDefinition = "LONGTEXT")
-    private String content;
-    // @Lob
-    // private byte[] image;
+    @Field(type = FieldType.Long)
+    private Long publishTime;
 
+    @Field(type = FieldType.Long)
+    private Long views;
 
-    
     // getters and setters
     public Long getId() {
         return id;
