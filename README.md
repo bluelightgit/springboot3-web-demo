@@ -4,6 +4,8 @@ It's my first Java project, and this project is a news management system develop
 
 It's also included a front-end application developed using `vue 3` to demonstrate the system's functionalities.
 
+
+![img.png](img.png)
 ## Key Components
 
 ### Models

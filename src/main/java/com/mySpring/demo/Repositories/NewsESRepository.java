@@ -3,6 +3,7 @@ package com.mySpring.demo.Repositories;
 import com.mySpring.demo.Models.NewsES;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -25,14 +26,16 @@ public interface NewsESRepository extends ElasticsearchRepository<NewsES, Long> 
      */
     List<NewsES> findByTitleOrContent(String title, String content);
 
-    /**
-     * 分页查询
-     * @param title
-     * @param content
-     * @param pageable
-     * @return
-     */
+//    /**
+//     * 分页查询
+//     * @param title
+//     * @param content
+//     * @param pageable
+//     * @return
+//     */
 //    List<NewsES> findByTitleOrContentWithPagination(String title, String content, Pageable pageable);
 
+    @Query("{\\\"bool\\\": {\\\"must\\\": [{\\\"range\\\": {\\\"publishTime\\\": {\\\"gte\\\": \\\"?0\\\", \\\"lte\\\": \\\"?1\\\"}}}]}, \\\"sort\\\": [{\\\"views\\\": {\\\"order\\\": \\\"desc\\\"}}]}\"")
+    List<NewsES> findTopNByPublishTimeBetweenOrderByViewsDesc(Long startTime, Long endTime);
 
 }

@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import com.mySpring.demo.Models.News;
-import com.mySpring.demo.Services.NewsService;
 import com.mySpring.demo.Services.VisitorService;
 import com.mySpring.demo.Utils.CookieFunction;
 import com.mySpring.demo.Utils.UUIDFunction;
@@ -33,65 +31,60 @@ import jakarta.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/news")
 public class NewsController {
-
     @Autowired
-    private NewsService newsService;
-
+    private NewsESService newsESService;
     @Autowired
     private VisitorService visitorService;
 
     @Autowired
     private Recommendation recommendation;
 
-    @Autowired
-    private NewsESService newsESService;
-
     private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
 
     @GetMapping
-    public List<News> getAllNews() {
-        return newsService.getAllNews();
+    public Iterable<NewsES> getAllNews() {
+        return newsESService.getAllNewsES();
     }
 
     @GetMapping("/{id}")
-    public News getNews(@PathVariable Long id) {
-        return newsService.getNews(id);
+    public NewsES getNews(@PathVariable Long id) {
+        return newsESService.getNewsES(id);
     }
 
     @PostMapping
-    public News createNews(@RequestBody News news) {
-        return newsService.createNews(news);
+    public NewsES createNews(@RequestBody NewsES news) {
+        return newsESService.createNewsES(news);
     }
 
     @PutMapping("/{id}")
-    public News updateNews(@PathVariable Long id, @RequestBody News news) {
-        return newsService.updateNews(id, news);
+    public NewsES updateNews(@PathVariable Long id, @RequestBody NewsES news) {
+        return newsESService.updateNewsES(id, news);
     }
 
     @DeleteMapping("/{id}")
     public void deleteNews(@PathVariable Long id) {
-        newsService.deleteNews(id);
+        newsESService.deleteNewsES(id);
     }
 
     @GetMapping("/hottest")
-    public List<News> getRecommendation() {
-        List<News> news = newsService.getHottestOfWeek();
+    public List<NewsES> getRecommendation() {
+        List<NewsES> news = newsESService.getHottestOfWeek();
         if (news == null || news.isEmpty()) {
             logger.warn("Hot news not found");
             return null;
         }
-        return newsService.getHottestOfWeek();
+        return newsESService.getHottestOfWeek();
     }
 
 
     // 获取用户的新闻推荐
     @GetMapping("/visitor/{UUID}/recommendation")
-    public List<News> getUserRecommendation(@PathVariable String UUID) throws IOException {
+    public List<NewsES> getUserRecommendation(@PathVariable String UUID) throws IOException {
 //        List<Visitor> history = visitorService.getVisitorByUUID(UUID);
         if (visitorService.checkUUID(UUID)) {
             return recommendation.getRecommendedNews(UUID);
         } else {
-            return newsService.getHottestOfWeek();
+            return newsESService.getHottestOfWeek();
         }
     }
 
@@ -111,18 +104,22 @@ public class NewsController {
 
     @PostMapping("/addView")
     public void addView(@RequestBody Long id) {
-        newsService.addView(id);
+        newsESService.increaseViews(id);
     }
 
     @PostMapping("/addView/{id}")
     public void addView2(@PathVariable Long id) {
-        newsService.addView(id);
+        newsESService.increaseViews(id);
     }
-
 
     @PostMapping("/search/{keyword}")
     public List<NewsES> searchNews(@PathVariable String keyword) {
         return newsESService.findByTitleOrContent(keyword, keyword);
+    }
+
+    @PostMapping("/upload")
+    public void uploadNews(@RequestBody NewsES news) {
+        newsESService.createNewsES(news);
     }
     @PostMapping("/test-request")
     public ResponseEntity<String> testPostRequest() {

@@ -1,7 +1,6 @@
 package com.mySpring.demo.Interfaces;
 import  java.util.List;
 
-import com.mySpring.demo.Models.News;
 import com.mySpring.demo.Models.Visitor;
 
 public interface IVisitorService {
@@ -10,6 +9,5 @@ public interface IVisitorService {
     Visitor createVisitor(Visitor visitor);
     Visitor updateVisitor(String id, Visitor visitorDetails);
     void deleteVisitor(String id);
-    void addToHistory(News news);
     List<Visitor> getHistory(String UUID);
 }
