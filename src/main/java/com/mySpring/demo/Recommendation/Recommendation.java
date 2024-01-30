@@ -43,8 +43,19 @@ public class Recommendation {
 
     @Autowired
     NewsESService newsESService;
-    
     private static final Logger logger = LoggerFactory.getLogger(Recommendation.class);
+//    private static final WordVectors vec;
+//
+//    static {
+//        try {
+//            vec = WordVectorSerializer.loadTxtVectors(new File("src\\main\\resources\\static\\glove.6B.100d.txt"));
+//        } catch (IOException e) {
+//            logger.error("Failed to load word2vec model");
+//            throw new RuntimeException(e);
+//        }
+//    }
+//    public Recommendation() throws IOException {
+//    }
 
     public List<NewsES> getRecommendedNews(String uuid) throws IOException {
 
@@ -66,9 +77,9 @@ public class Recommendation {
 //        Files.write(tempFile, historyTitles, StandardCharsets.UTF_8);
 //        // 使用Word2Vec模型训练历史新闻标题
 //        SentenceIterator iter = new BasicLineIterator(tempFile.toFile().getAbsolutePath());
+
         // 创建一个句子迭代器
         SentenceIterator iter = new CollectionSentenceIterator(historyTitles);
-
         TokenizerFactory t = new DefaultTokenizerFactory();
         t.setTokenPreProcessor(new CommonPreprocessor());
         Word2Vec vec = new Word2Vec.Builder()

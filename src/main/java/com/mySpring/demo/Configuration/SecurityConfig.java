@@ -1,4 +1,4 @@
-package com.mySpring.demo.TestSwagger;
+package com.mySpring.demo.Configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

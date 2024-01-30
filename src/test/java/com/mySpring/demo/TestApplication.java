@@ -63,7 +63,7 @@ public class TestApplication {
     @Test
     public void TestElasticsearch() {
         NewsES newsES = new NewsES();
-        newsES.setId(0L);
+        newsES.setId(9999L);
         newsES.setTitle("testTitle");
         newsES.setContent("test".repeat(100));
         newsES.setUrl("testUrl");
@@ -71,12 +71,25 @@ public class TestApplication {
         newsES.setTag("testTag");
         newsES.setImageUrl("https://www.google.co.jp/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png");
         newsES.setViews(0L);
-        newsESService.createNewsES(newsES);
+        newsESService.addUploadNews(newsES);
 
     }
     @Test
     public void TestDeleteES() {
-        newsESService.deleteNewsES(0L);
+        newsESService.deleteNewsES(9999L);
+    }
+
+    @Test
+    public void TestGetMaxId() {
+        System.out.println(newsESService.getMaxId());
+    }
+
+    @Test
+    public void TestGetHottestOfWeek() {
+        List<NewsES> newsList = newsESService.getHottestOfWeek();
+        for (NewsES news : newsList) {
+            System.out.println(news.getTitle());
+        }
     }
 
 }

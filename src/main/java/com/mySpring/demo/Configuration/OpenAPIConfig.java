@@ -1,4 +1,4 @@
-package com.mySpring.demo.TestSwagger;
+package com.mySpring.demo.Configuration;
 
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -12,11 +12,11 @@ public class OpenAPIConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("测试 title")
-                        .description("SpringBoot3 集成 Swagger3")
+                        .title("Test")
+                        .description("Swagger3")
                         .version("v1"))
                 .externalDocs(new ExternalDocumentation()
-                        .description("项目API文档")
+                        .description("API doc")
                         .url("/api-docs"));
     }
 }

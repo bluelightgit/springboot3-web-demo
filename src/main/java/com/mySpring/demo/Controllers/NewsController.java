@@ -1,6 +1,7 @@
 package com.mySpring.demo.Controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -42,8 +43,10 @@ public class NewsController {
     private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
 
     @GetMapping
-    public Iterable<NewsES> getAllNews() {
-        return newsESService.getAllNewsES();
+    public List<NewsES> getAllNews() {
+        List<NewsES> allNews = new ArrayList<>();
+        newsESService.getAllNewsES().forEach(allNews::add);
+        return allNews;
     }
 
     @GetMapping("/{id}")
@@ -119,7 +122,7 @@ public class NewsController {
 
     @PostMapping("/upload")
     public void uploadNews(@RequestBody NewsES news) {
-        newsESService.createNewsES(news);
+        newsESService.addUploadNews(news);
     }
     @PostMapping("/test-request")
     public ResponseEntity<String> testPostRequest() {
