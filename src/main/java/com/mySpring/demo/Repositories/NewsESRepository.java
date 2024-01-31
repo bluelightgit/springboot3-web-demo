@@ -42,15 +42,6 @@ public interface NewsESRepository extends ElasticsearchRepository<NewsES, Long> 
      */
 //    @Query("{\"\": {\"must\": [{\"range\": {\"publishTime\": {\"gte\": \"?0\", \"lte\": \"?1\"}}}]}, \"sort\": [{\"views\": {\"order\": \"desc\"}}]}\"")
     List<NewsES> findByPublishTimeBetweenOrderByViewsDesc(Long startTime, Long endTime);
-    /**
-     * 获取当前最大的id
-     */
-//    @Query("{\\\"aggs\\\": {\\\"max_id\\\": {\\\"max\\\": {\\\"field\\\": \\\"id\\\"}}}}")
-//    Long findMaxId();
 
-    /**
-     * 倒序查询
-     */
-//    @Query("{\"sort\": [{\"id\": {\"order\": \"desc\"}}]}")
     List<NewsES> findByPublishTimeBetweenOrderByIdDesc(Long startTime, Long endTime);
 }

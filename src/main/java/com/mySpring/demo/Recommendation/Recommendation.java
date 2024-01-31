@@ -36,8 +36,6 @@ import org.deeplearning4j.text.tokenization.tokenizerfactory.TokenizerFactory;
 @Component
 public class Recommendation {
 
-
-
     @Autowired
     VisitorService visitorService;
 
@@ -57,16 +55,16 @@ public class Recommendation {
 //    public Recommendation() throws IOException {
 //    }
 
-    public List<NewsES> getRecommendedNews(String uuid) throws IOException {
+    public List<NewsES> getRecommendedNews(String uuid, boolean isRegisteredUser) throws IOException {
 
         logger.info("Generating recommendations for user: {}", uuid);
 
-        List<Visitor> history = visitorService.getHistory(uuid);
+        List<Long> historyList = visitorService.getHistory(uuid, true);
 
         List<NewsES> historyNews = new ArrayList<>();
-        for (Visitor visitorHistory : history) {
+        for (Long history : historyList) {
 
-            historyNews.add(newsESService.getNewsES(visitorHistory.getNewsId()));
+            historyNews.add(newsESService.getNewsES(history));
         }
 
         // 将历史新闻标题转换为字符串列表
@@ -120,15 +118,12 @@ public class Recommendation {
                         similarity += temp;
                         count += 1;
                     }
-                    // System.out.println("history:"+ historyKeyWord + " keyWord: " + keyWord + "similarity: " + temp);
                 }
-
             }
             similarityScores.put(news, similarity);
             // if (similarity > 0.1) {
             //     System.out.println(news.getTitle() + " : " + similarity);
             // }
-
         }
 
         // 根据相似度排序，选择最相似的新闻推荐给用户

@@ -28,7 +28,7 @@ public class VisitorService {
     }
 
     public List<Visitor> getVisitorByUUID(String UUID) {
-        return visitorRepository.getHistoryByUUID(UUID);
+        return visitorRepository.getDetailsByUUID(UUID);
     }
 
     public Visitor createVisitor(Visitor visitor) {
@@ -58,7 +58,7 @@ public class VisitorService {
     }
 
     public boolean checkUUID(String UUID) {
-        List<Visitor> visitor = visitorRepository.getHistoryByUUID(UUID);
+        List<Long> visitor = visitorRepository.getHistoryByUUID(UUID);
         if (visitor == null) {
             return false;
         } else {
@@ -67,8 +67,12 @@ public class VisitorService {
     }
 
     @Cacheable(value = "visitorHistory", key = "#UUID")
-    public List<Visitor> getHistory(String UUID) {
-        return visitorRepository.getHistoryByUUID(UUID);
+    public List<Long> getHistory(String UUID, boolean isDistinct) {
+        if (isDistinct) {
+            return visitorRepository.getHistoryByUUIDDistinct(UUID);
+        } else {
+            return visitorRepository.getHistoryByUUID(UUID);
+        }
     }
     
 }

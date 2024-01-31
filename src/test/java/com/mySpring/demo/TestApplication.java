@@ -50,7 +50,7 @@ public class TestApplication {
     @Test
     public void TestRecommendation() throws IOException {
         String testUUID = "testUUID";
-        List<NewsES> newsList = recommendation.getRecommendedNews(testUUID);
+        List<NewsES> newsList = recommendation.getRecommendedNews(testUUID, false);
         for (NewsES news : newsList) {
             System.out.println(news.getTitle());
         }

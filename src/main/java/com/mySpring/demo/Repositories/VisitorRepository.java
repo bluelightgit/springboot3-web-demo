@@ -11,14 +11,27 @@ import com.mySpring.demo.Models.Visitor;
 
 @Repository
 public interface VisitorRepository extends JpaRepository<Visitor, Long> {
-    
+
+    /**
+     * @param UUID
+     * @return
+     */
+    @Query(value = "SELECT * FROM visitor WHERE UUID = ?1", nativeQuery = true)
+    List<Visitor> getDetailsByUUID(String UUID);
 
     /**
      * 根据UUID查询访问历史
      * @param UUID
      * @return
      */
-    @Query(value = "SELECT * FROM visitor WHERE UUID = ?1", nativeQuery = true)
-    List<Visitor> getHistoryByUUID(String UUID);
+    @Query(value = "SELECT news_id FROM visitor WHERE UUID = ?1", nativeQuery = true)
+    List<Long> getHistoryByUUID(String UUID);
 
+    /**
+     * 根据UUID查询访问历史(去重)
+     * @param UUID
+     * @return
+     */
+    @Query(value = "SELECT DISTINCT news_id FROM visitor WHERE UUID = ?1", nativeQuery = true)
+    List<Long> getHistoryByUUIDDistinct(String UUID);
 }
