@@ -196,10 +196,6 @@
 			<version>1.0.0-M2</version>
 		</dependency>
 
-
-
-
-
 		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-entitymanager -->
 <!--		<dependency>-->
 <!--			<groupId>org.hibernate</groupId>-->
