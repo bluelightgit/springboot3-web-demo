@@ -18,4 +18,24 @@ public class UserHistory {
     private Long newsId;
 
     // getters and setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Long getNewsId() {
+        return newsId;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setNewsId(Long newsId) {
+        this.newsId = newsId;
+    }
 }

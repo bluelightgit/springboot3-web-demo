@@ -3,6 +3,7 @@ package com.mySpring.demo.Repositories;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,7 @@ public interface VisitorRepository extends JpaRepository<Visitor, Long> {
      * @return
      */
     @Query(value = "SELECT * FROM visitor WHERE UUID = ?1", nativeQuery = true)
-    List<Visitor> getDetailsByUUID(String UUID);
+    Optional<List<Visitor>> getDetailsByUUID(String UUID);
 
     /**
      * 根据UUID查询访问历史
@@ -25,7 +26,7 @@ public interface VisitorRepository extends JpaRepository<Visitor, Long> {
      * @return
      */
     @Query(value = "SELECT news_id FROM visitor WHERE UUID = ?1", nativeQuery = true)
-    List<Long> getHistoryByUUID(String UUID);
+    Optional<List<Long>> getHistoryByUUID(String UUID);
 
     /**
      * 根据UUID查询访问历史(去重)
@@ -33,5 +34,5 @@ public interface VisitorRepository extends JpaRepository<Visitor, Long> {
      * @return
      */
     @Query(value = "SELECT DISTINCT news_id FROM visitor WHERE UUID = ?1", nativeQuery = true)
-    List<Long> getHistoryByUUIDDistinct(String UUID);
+    Optional<List<Long>> getHistoryByUUIDDistinct(String UUID);
 }

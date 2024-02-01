@@ -5,6 +5,7 @@ import com.mySpring.demo.Models.Visitor;
 
 import com.mySpring.demo.Repositories.VisitorRepository;
 import com.mySpring.demo.Services.NewsESService;
+import com.mySpring.demo.Services.UserService;
 import com.mySpring.demo.Services.VisitorService;
 
 import org.deeplearning4j.text.sentenceiterator.CollectionSentenceIterator;
@@ -40,6 +41,9 @@ public class Recommendation {
     VisitorService visitorService;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     NewsESService newsESService;
     private static final Logger logger = LoggerFactory.getLogger(Recommendation.class);
 //    private static final WordVectors vec;
@@ -58,8 +62,12 @@ public class Recommendation {
     public List<NewsES> getRecommendedNews(String uuid, boolean isRegisteredUser) throws IOException {
 
         logger.info("Generating recommendations for user: {}", uuid);
-
-        List<Long> historyList = visitorService.getHistory(uuid, true);
+        List<Long> historyList;
+        if (isRegisteredUser) {
+            historyList = userService.getHistory(userService.getUserByUUID(uuid).getId(), true);
+        } else {
+            historyList = visitorService.getHistory(uuid, true);
+        }
 
         List<NewsES> historyNews = new ArrayList<>();
         for (Long history : historyList) {
