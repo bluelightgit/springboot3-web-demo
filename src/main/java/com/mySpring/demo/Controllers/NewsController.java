@@ -85,7 +85,7 @@ public class NewsController {
     public List<NewsES> getUserRecommendation(@PathVariable String UUID) throws IOException {
 //        List<Visitor> history = visitorService.getVisitorByUUID(UUID);
         if (visitorService.checkUUID(UUID)) {
-            return recommendation.getRecommendedNews(UUID);
+            return recommendation.getRecommendedNews(UUID, false);
         } else {
             return newsESService.getHottestOfWeek();
         }

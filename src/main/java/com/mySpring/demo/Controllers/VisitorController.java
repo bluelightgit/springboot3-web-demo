@@ -1,6 +1,10 @@
 package com.mySpring.demo.Controllers;
 
+import com.mySpring.demo.Models.LoginRequest;
+import com.mySpring.demo.Models.User;
+import com.mySpring.demo.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +21,9 @@ public class VisitorController {
     @Autowired
     private VisitorService visitorService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/visitors")
     public Visitor createVisitor(@RequestBody Visitor visitor) {
         return visitorService.createVisitor(visitor);
@@ -31,4 +38,36 @@ public class VisitorController {
     public Visitor getVisitor(@RequestBody Long id) {
         return visitorService.getVisitor(id);
     }
+
+    @PostMapping("/User/login")
+    public ResponseEntity<?> userLogin(@RequestBody LoginRequest loginRequest) {
+        return userService.login(loginRequest);
+    }
+
+    @PostMapping("/User/register")
+    public ResponseEntity<?> userRegister(@RequestBody User user) {
+        return userService.register(user);
+    }
+
+    @GetMapping("/User/profile")
+    public User userProfile(@RequestBody String username) {
+        return userService.getUserByUsername(username);
+    }
+
+    @PostMapping("/User/updateProfile")
+    public User userUpdateProfile(@RequestBody User user) {
+        return userService.updateUser(user);
+    }
+
+    @PostMapping("/User/logout")
+    public void userLogout(@RequestBody String username) {
+        userService.logout(username);
+    }
+
+    @PostMapping("/User/delete")
+    public void userDelete(@RequestBody String username) {
+        Long id = userService.getUserByUsername(username).getId();
+        userService.deleteUser(id);
+    }
+
 }
