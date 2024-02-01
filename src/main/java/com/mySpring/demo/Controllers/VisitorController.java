@@ -1,8 +1,10 @@
 package com.mySpring.demo.Controllers;
 
+import com.mySpring.demo.Models.LoginRequest;
 import com.mySpring.demo.Models.User;
 import com.mySpring.demo.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,12 +40,12 @@ public class VisitorController {
     }
 
     @PostMapping("/User/login")
-    public User userLogin(@RequestBody User user) {
-        return userService.login(user);
+    public ResponseEntity<?> userLogin(@RequestBody LoginRequest loginRequest) {
+        return userService.login(loginRequest);
     }
 
     @PostMapping("/User/register")
-    public User userRegister(@RequestBody User user) {
+    public ResponseEntity<?> userRegister(@RequestBody User user) {
         return userService.register(user);
     }
 

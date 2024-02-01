@@ -1,13 +1,16 @@
 package com.mySpring.demo.Services;
 
 import com.mySpring.demo.Interfaces.IUserService;
+import com.mySpring.demo.Models.StatusResponse;
+import com.mySpring.demo.Models.LoginRequest;
 import com.mySpring.demo.Models.User;
-import com.mySpring.demo.Models.UserHistory;
 import com.mySpring.demo.Repositories.UserHistoryRepository;
 import com.mySpring.demo.Repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,37 +53,57 @@ public class UserService implements IUserService {
     }
 
 
-    public User register(User user) {
-        if (getUserByUsername(user.getUsername()) != null) {
-            throw new RuntimeException("Username already exists");
-        } else if (getUserByEmail(user.getEmail()) != null) {
-            throw new RuntimeException("Email already exists");
-        } else if (getUserByUUID(user.getUUID()) != null) {
-            throw new RuntimeException("UUID already exists");
-        } else if (user.getPassword().length() < 6) {
-            throw new RuntimeException("At least 6 characters for password");
-        } else {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            logger.info("New user registered: {}, id: {}", user.getUsername(), user.getId());
-            return userRepository.save(user);
+    public ResponseEntity<?> register(User user) {
+        StatusResponse statusResponse = new StatusResponse();
+        try {
+            if (getUserByUsername(user.getUsername()) != null) {
+                throw new RuntimeException("Username already exists");
+            } else if (getUserByEmail(user.getEmail()) != null) {
+                throw new RuntimeException("Email already exists");
+            } else if (getUserByUUID(user.getUUID()) != null) {
+                throw new RuntimeException("UUID already exists");
+            } else if (user.getPassword().length() < 6) {
+                throw new RuntimeException("At least 6 characters for password");
+            } else {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                userRepository.save(user);
+                logger.info("New user registered: {}", user.getUsername());
+                statusResponse.setStatus(HttpStatus.OK.value());
+                statusResponse.setMessage("Register success");
+                return new ResponseEntity<>(statusResponse, HttpStatus.OK);
+            }
+        } catch (Exception e){
+            statusResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            statusResponse.setMessage(e.getMessage());
+            return new ResponseEntity<>(statusResponse, HttpStatus.BAD_REQUEST);
         }
     }
 
-    public User login(User user) {
-        User userDetails = getUserByUsername(user.getUsername());
-        if (userDetails == null){
-            throw new RuntimeException("User does not exist");
-        } else if (!passwordEncoder.matches(userDetails.getPassword(),passwordEncoder.encode(user.getPassword()))) {
-            throw new RuntimeException("Password is incorrect");
-        } else {
-            logger.info("User logged in: {}, id: {}", user.getUsername(), user.getId());
-            return userDetails;
+    public ResponseEntity<?> login(LoginRequest user) {
+        StatusResponse statusResponse = new StatusResponse();
+        try {
+            User userDetails = getUserByUsername(user.getUsername());
+            if (userDetails == null) {
+                throw new RuntimeException("User does not exist");
+            } else if (!passwordEncoder.matches(user.getPassword(), userDetails.getPassword())) {
+                throw new RuntimeException("Password is incorrect");
+            } else {
+                logger.info("User logged in: {}, id: {}", userDetails.getUsername(), userDetails.getId());
+                statusResponse.setStatus(HttpStatus.OK.value());
+                statusResponse.setMessage("Login success");
+                return new ResponseEntity<>(statusResponse, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            statusResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            statusResponse.setMessage(e.getMessage());
+            return new ResponseEntity<>(statusResponse, HttpStatus.BAD_REQUEST);
         }
     }
 
     public void logout(String username) {
         // TODO: add logout logic
         logger.info("User logged out: {}", username);
+
     }
 
     public User updateUser(User user) {
@@ -90,7 +113,7 @@ public class UserService implements IUserService {
             throw new RuntimeException("Username already exists");
         } else if (getUserByEmail(user.getEmail()) != null && !Objects.equals(user.getEmail(), oldEmail)){
             throw new RuntimeException("Email already exists");
-        } else if (passwordEncoder.matches(passwordEncoder.encode(user.getPassword()), getUser(user.getId()).getPassword())) {
+        } else if (passwordEncoder.matches(user.getPassword(), getUser(user.getId()).getPassword())) {
             throw new RuntimeException("New password cannot be the same as the old one");
         } else {
             logger.info("User updated: {}, id: {}", user.getUsername(), user.getId());
