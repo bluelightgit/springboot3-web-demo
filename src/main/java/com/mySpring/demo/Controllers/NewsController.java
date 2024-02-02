@@ -54,6 +54,11 @@ public class NewsController {
         return newsESService.getNewsES(id);
     }
 
+    @GetMapping("/{id}/views")
+    public Long getViews(@PathVariable Long id) {
+        return newsESService.getViews(id);
+    }
+
     @PostMapping
     public NewsES createNews(@RequestBody NewsES news) {
         return newsESService.createNewsES(news);

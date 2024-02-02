@@ -1,12 +1,20 @@
 ## Project Overview
 
-It's my first Java project, and this project is a news management system developed using `JDK 17`, `Spring Boot 3`, and `Maven 3`. It provides functionalities for managing news and visitor data. The system also includes a recommendation feature that suggests news based on a user's browsing history.
+It's my first Java project, and this project is a news management system developed using `JDK 17`, `Spring Boot 3`, and `ElasticSearch 8`. It provides functionalities for managing news and visitor data. The system also includes a recommendation feature (`Word2Vec` based on `DL4J`) that suggests news based on a user's browsing history.
 
 It's also included a front-end application developed using `vue 3` to demonstrate the system's functionalities.
 
 
-![img.png](img.png)
-
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+<style>
+img {
+    width: 40%;
+    height: 40%;
+    border: 5px solid #b9b9b919;
+    border-radius: 8px;
+}
+</style>
 ### TODO:
 - Search Functionality: Implement a search feature to allow users to search for news articles by keywords.
 - Pagination: Implement pagination for displaying news articles in manageable chunks.

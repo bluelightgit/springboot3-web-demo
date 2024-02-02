@@ -3,6 +3,7 @@ package com.mySpring.demo.Services;
 import com.google.gson.Gson;
 import com.mySpring.demo.Interfaces.INewsESService;
 import com.mySpring.demo.Models.NewsES;
+import com.mySpring.demo.Models.ViewUpdate;
 import com.mySpring.demo.Repositories.NewsESRepository;
 
 
@@ -94,7 +95,7 @@ public class NewsESService implements INewsESService {
 
     public List<NewsES> getHottestOfWeek() {
         long now = System.currentTimeMillis() / 1000L;
-        return newsESRepository.findByPublishTimeBetweenOrderByViewsDesc(now - 86400L, now);
+        return newsESRepository.findByPublishTimeBetweenOrderByViewsDesc(now - 86400L * 7, now);
     }
 
     /**
@@ -117,8 +118,12 @@ public class NewsESService implements INewsESService {
 //        viewsMap.clear();
 //    }
     public void increaseViews(Long id) {
-        stringRedisTemplate.opsForValue().increment(id.toString());
+        Long views = stringRedisTemplate.opsForValue().increment(id.toString());
+        Gson gson = new Gson();
+        String viewUpdateJson = gson.toJson(new ViewUpdate(id, views));
+        stringRedisTemplate.convertAndSend("viewsChannel", viewUpdateJson);
     }
+
     @Scheduled(fixedRate = 1000) // 1 seconds
     public void updateViews() {
         Set<String> keys = stringRedisTemplate.keys("*");
@@ -130,10 +135,8 @@ public class NewsESService implements INewsESService {
                     NewsES newsES = optionalNewsES.orElse(null);
                     String value = stringRedisTemplate.opsForValue().get(key);
                     if (newsES != null && value != null) {
-                        long views = Integer.parseInt(value);
-                        newsES.setViews(newsES.getViews() + views);
+                        newsES.setViews((long) Integer.parseInt(value));
                         newsESRepository.save(newsES);
-                        stringRedisTemplate.delete(key);
                     }
                 }
             });
@@ -215,5 +218,16 @@ public class NewsESService implements INewsESService {
 //        }
 //        return maxId;
 //    }
+
+    /**
+     * 实时views
+     */
+    public Long getViews(Long id) {
+        String views = stringRedisTemplate.opsForValue().get(id.toString());
+        if (views == null) {
+
+        }
+        return Long.parseLong(views);
+    }
 
 }
