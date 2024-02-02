@@ -4,17 +4,9 @@ It's my first Java project, and this project is a news management system develop
 
 It's also included a front-end application developed using `vue 3` to demonstrate the system's functionalities.
 
+<img src="img_1.png" alt="img_1" width="40%" height="40%" style="border:5px solid #b9b9b919; border-radius:8px;">
+<img src="img_2.png" alt="img_1" width="40%" height="40%" style="border:5px solid #b9b9b919; border-radius:8px;">
 
-![img_1.png](img_1.png)
-![img_2.png](img_2.png)
-<style>
-img {
-    width: 40%;
-    height: 40%;
-    border: 5px solid #b9b9b919;
-    border-radius: 8px;
-}
-</style>
 ### TODO:
 - Search Functionality: Implement a search feature to allow users to search for news articles by keywords.
 - Pagination: Implement pagination for displaying news articles in manageable chunks.
