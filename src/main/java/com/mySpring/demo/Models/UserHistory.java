@@ -17,7 +17,13 @@ public class UserHistory {
 
     private Long newsId;
 
-    // getters and setters
+    public UserHistory() {
+    }
+
+    public UserHistory(User user, Long newsId) {
+        this.user = user;
+        this.newsId = newsId;
+    }
 
     public Long getId() {
         return id;

@@ -3,10 +3,10 @@ package com.mySpring.demo;
 import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mySpring.demo.Models.NewsES;
-import com.mySpring.demo.Recommendation.Recommendation;
-import com.mySpring.demo.Repositories.NewsESRepository;
-import com.mySpring.demo.Services.NewsESService;
+import com.mySpring.demo.recommendation.Recommendation;
+import com.mySpring.demo.services.impl.NewsESService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * springboot测试类
  */
 import com.mySpring.demo.Models.Visitor;
-import com.mySpring.demo.Services.VisitorService;
+import com.mySpring.demo.services.impl.VisitorService;
 
 @SpringBootTest
 public class TestApplication {
@@ -61,7 +61,7 @@ public class TestApplication {
      * 测试Elasticsearch是否连接
      */
     @Test
-    public void TestElasticsearch() {
+    public void TestElasticsearch() throws JsonProcessingException {
         NewsES newsES = new NewsES();
         newsES.setId(9999L);
         newsES.setTitle("testTitle");
