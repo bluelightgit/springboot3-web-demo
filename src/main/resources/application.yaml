@@ -4,6 +4,12 @@ server:
     context-path: 
 
 spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      auto-offset-reset: earliest
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
   elasticsearch:
     rest:
         uris: https://localhost:9200
@@ -13,9 +19,6 @@ spring:
         password: d=ABgcKOKDxmuSWf4_T_
 #        ca-fingerprint: 02D3523FE27FBB1F37E42B43D93A9D8A16A3B7701820B60A7DEF1C52EACD98AB
 
-#   #RabbitMQ服务器配置，地址账号密码，virtualhost等配置
-#   rabbitmq:
-#     addresses: localhost:15672
-#     username: user
-#     password: admin
-#     virtual-host: 
+kafka:
+  topic:
+    views-update-topic: views-update-topic

@@ -1,6 +1,6 @@
 package com.mySpring.demo.services.impl;
 
-import com.mySpring.demo.Models.UserHistory;
+import com.mySpring.demo.models.user.pojos.UserHistory;
 import com.mySpring.demo.repositories.UserHistoryRepository;
 import com.mySpring.demo.services.IUserHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.mySpring.demo.repositories;
 
-import com.mySpring.demo.Models.NewsES;
+import com.mySpring.demo.models.news.pojos.NewsES;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
 package com.mySpring.demo.services;
 
-import com.mySpring.demo.Models.NewsES;
+import com.mySpring.demo.models.news.pojos.NewsES;
 
 import java.util.List;
 

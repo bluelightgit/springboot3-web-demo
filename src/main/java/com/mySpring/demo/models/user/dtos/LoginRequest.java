@@ -1,4 +1,4 @@
-package com.mySpring.demo.Models;
+package com.mySpring.demo.models.user.dtos;
 
 public class LoginRequest {
     private String username;

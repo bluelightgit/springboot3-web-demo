@@ -1,12 +1,14 @@
-package com.mySpring.demo.Models;
+package com.mySpring.demo.models.news.pojos;
 
 import jakarta.persistence.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.io.Serializable;
+
 @Document(indexName = "news")
-public class NewsES {
+public class NewsES implements Serializable {
 
     @Id
     @Field(index = false, type = FieldType.Long)

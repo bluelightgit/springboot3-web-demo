@@ -1,6 +1,6 @@
 package com.mySpring.demo.repositories;
 
-import com.mySpring.demo.Models.User;
+import com.mySpring.demo.models.user.pojos.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

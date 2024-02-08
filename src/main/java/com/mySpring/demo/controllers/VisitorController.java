@@ -1,8 +1,8 @@
 package com.mySpring.demo.controllers;
 
-import com.mySpring.demo.Models.LoginRequest;
-import com.mySpring.demo.Models.User;
-import com.mySpring.demo.Models.UserHistory;
+import com.mySpring.demo.models.user.dtos.LoginRequest;
+import com.mySpring.demo.models.user.pojos.User;
+import com.mySpring.demo.models.user.pojos.UserHistory;
 import com.mySpring.demo.services.impl.UserHistoryService;
 import com.mySpring.demo.services.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 
-import com.mySpring.demo.Models.Visitor;
+import com.mySpring.demo.models.visitor.pojos.Visitor;
 import com.mySpring.demo.services.impl.VisitorService;
 
 @RestController

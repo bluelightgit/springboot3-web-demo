@@ -1,13 +1,14 @@
 package com.mySpring.demo.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.mySpring.demo.Models.NewsES;
-import com.mySpring.demo.Models.ViewUpdate;
+import com.mySpring.demo.models.news.pojos.NewsES;
+import com.mySpring.demo.models.news.dtos.ViewUpdate;
 import com.mySpring.demo.repositories.NewsESRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class ViewsSubscriber {
 
     @Autowired
@@ -51,4 +53,5 @@ public class ViewsSubscriber {
             newsESRepository.save(newsES);
         }
     }
+
 }

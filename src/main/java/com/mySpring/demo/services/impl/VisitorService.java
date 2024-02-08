@@ -1,6 +1,6 @@
 package com.mySpring.demo.services.impl;
 
-import com.mySpring.demo.Models.Visitor;
+import com.mySpring.demo.models.visitor.pojos.Visitor;
 import com.mySpring.demo.repositories.VisitorRepository;
 
 import java.util.List;

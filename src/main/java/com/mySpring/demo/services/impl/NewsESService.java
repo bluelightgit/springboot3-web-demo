@@ -2,15 +2,15 @@ package com.mySpring.demo.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.mySpring.demo.services.INewsESService;
-import com.mySpring.demo.Models.NewsES;
-import com.mySpring.demo.Models.ViewUpdate;
+import com.mySpring.demo.models.news.pojos.NewsES;
+import com.mySpring.demo.models.news.dtos.ViewUpdate;
 import com.mySpring.demo.repositories.NewsESRepository;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,6 +32,9 @@ public class NewsESService implements INewsESService {
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -125,6 +129,7 @@ public class NewsESService implements INewsESService {
         Long views = stringRedisTemplate.opsForValue().increment(id.toString());
         String viewUpdateJson = objectMapper.writeValueAsString(new ViewUpdate(id, views));
         stringRedisTemplate.convertAndSend("viewsChannel", viewUpdateJson);
+
     }
 
     @Scheduled(fixedRate = TICK) // 1 seconds
@@ -195,7 +200,7 @@ public class NewsESService implements INewsESService {
     }
 
     public Long getMaxId() {
-        List<NewsES> newsESList = newsESRepository.findByPublishTimeBetweenOrderByIdDesc(0L, System.currentTimeMillis() / 1000L);
+        List<NewsES> newsESList = newsESRepository.findByPublishTimeBetweenOrderByIdDesc(0L, System.currentTimeMillis() / 1000L + 60000L);
         return newsESList.get(0).getId();
     }
 //    public Long getMaxId() {
@@ -228,7 +233,7 @@ public class NewsESService implements INewsESService {
     public Long getViews(Long id) throws JsonProcessingException {
         String views = stringRedisTemplate.opsForValue().get(id.toString());
         if (views == null) {
-            Long tmp = newsESRepository.findById(id).orElse(null).getViews();
+            Long tmp = Objects.requireNonNull(newsESRepository.findById(id).orElse(null)).getViews();
             if (tmp != null) {
                 stringRedisTemplate.convertAndSend("viewsChannel", objectMapper.writeValueAsString(new ViewUpdate(id, tmp)));
             }

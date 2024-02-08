@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mySpring.demo.Models.NewsES;
+import com.mySpring.demo.models.news.pojos.NewsES;
 import com.mySpring.demo.recommendation.Recommendation;
 import com.mySpring.demo.services.impl.NewsESService;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 /*
  * springboot测试类
  */
-import com.mySpring.demo.Models.Visitor;
+import com.mySpring.demo.models.visitor.pojos.Visitor;
 import com.mySpring.demo.services.impl.VisitorService;
 
 @SpringBootTest

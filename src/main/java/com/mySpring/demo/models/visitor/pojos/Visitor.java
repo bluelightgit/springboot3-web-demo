@@ -1,6 +1,4 @@
-package com.mySpring.demo.Models;
-
-import com.mySpring.demo.utils.TextFormatDetector;
+package com.mySpring.demo.models.visitor.pojos;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

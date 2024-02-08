@@ -6,12 +6,15 @@ import java.util.List;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mySpring.demo.Models.NewsES;
+import com.mySpring.demo.models.news.dtos.ViewUpdate;
+import com.mySpring.demo.models.news.pojos.NewsES;
 import com.mySpring.demo.recommendation.*;
 import com.mySpring.demo.services.impl.NewsESService;
+import com.mySpring.demo.services.impl.ViewsUpdateProducerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -111,14 +114,24 @@ public class NewsController {
 
     }
 
+    @Value("${kafka.topic.views-update-topic}")
+    private String viewsUpdateTopic;
+
+    private final ViewsUpdateProducerService viewsUpdateProducerService;
+
+    public NewsController(ViewsUpdateProducerService viewsUpdateProducerService) {
+        this.viewsUpdateProducerService = viewsUpdateProducerService;
+    }
     @PostMapping("/addView")
     public void addView(@RequestBody Long id) throws JsonProcessingException {
         newsESService.increaseViews(id);
+//        viewsUpdateProducerService.sendViewsUpdateMessage(viewsUpdateTopic, new ViewUpdate(id, 1L));
     }
 
     @PostMapping("/addView/{id}")
     public void addView2(@PathVariable Long id) throws JsonProcessingException {
         newsESService.increaseViews(id);
+//        viewsUpdateProducerService.sendViewsUpdateMessage(viewsUpdateTopic, new ViewUpdate(id, 1L));
     }
 
     @PostMapping("/search/{keyword}")

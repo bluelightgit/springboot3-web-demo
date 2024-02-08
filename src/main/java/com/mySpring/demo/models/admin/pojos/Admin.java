@@ -1,4 +1,4 @@
-package com.mySpring.demo.Models;
+package com.mySpring.demo.models.admin.pojos;
 
 import jakarta.persistence.*;
 import lombok.Getter;

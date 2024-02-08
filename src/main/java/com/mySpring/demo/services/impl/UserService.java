@@ -1,15 +1,14 @@
 package com.mySpring.demo.services.impl;
 
 import com.mySpring.demo.services.IUserService;
-import com.mySpring.demo.Models.StatusResponse;
-import com.mySpring.demo.Models.LoginRequest;
-import com.mySpring.demo.Models.User;
+import com.mySpring.demo.models.response.StatusResponse;
+import com.mySpring.demo.models.user.dtos.LoginRequest;
+import com.mySpring.demo.models.user.pojos.User;
 import com.mySpring.demo.repositories.UserHistoryRepository;
 import com.mySpring.demo.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

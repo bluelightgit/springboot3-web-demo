@@ -1,4 +1,4 @@
-package com.mySpring.demo.Models;
+package com.mySpring.demo.models.news.dtos;
 import lombok.Getter;
 
 import java.io.Serializable;

@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.mySpring.demo.Models.Visitor;
+import com.mySpring.demo.models.visitor.pojos.Visitor;
 
 @Repository
 public interface VisitorRepository extends JpaRepository<Visitor, Long> {

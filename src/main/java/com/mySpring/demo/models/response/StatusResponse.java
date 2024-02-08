@@ -1,4 +1,4 @@
-package com.mySpring.demo.Models;
+package com.mySpring.demo.models.response;
 
 public class StatusResponse {
     private int status;

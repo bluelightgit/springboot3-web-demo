@@ -211,7 +211,10 @@
 			<artifactId>guava</artifactId>
 			<version>31.1-jre</version>
 		</dependency> -->
-
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
 
 
 	</dependencies>

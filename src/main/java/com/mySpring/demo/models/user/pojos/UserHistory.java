@@ -1,5 +1,6 @@
-package com.mySpring.demo.Models;
+package com.mySpring.demo.models.user.pojos;
 
+import com.mySpring.demo.models.user.pojos.User;
 import jakarta.persistence.*;
 
 
