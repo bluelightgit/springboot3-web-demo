@@ -8,7 +8,6 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mySpring.demo.models.news.dtos.ViewUpdate;
 import com.mySpring.demo.models.news.pojos.NewsES;
-import com.mySpring.demo.recommendation.*;
 import com.mySpring.demo.services.impl.NewsESService;
 import com.mySpring.demo.services.impl.ViewsUpdateProducerService;
 import org.slf4j.Logger;
@@ -40,9 +39,6 @@ public class NewsController {
     private NewsESService newsESService;
     @Autowired
     private VisitorService visitorService;
-
-    @Autowired
-    private Recommendation recommendation;
 
     private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
 
@@ -86,18 +82,6 @@ public class NewsController {
             return null;
         }
         return newsESService.getHottestOfWeek();
-    }
-
-
-    // 获取用户的新闻推荐
-    @GetMapping("/visitor/{UUID}/recommendation")
-    public List<NewsES> getUserRecommendation(@PathVariable String UUID) throws IOException {
-//        List<Visitor> history = visitorService.getVisitorByUUID(UUID);
-        if (!visitorService.isBlankVisitor(UUID)) {
-            return recommendation.getRecommendedNews(UUID, false);
-        } else {
-            return newsESService.getHottestOfWeek();
-        }
     }
 
     @RequestMapping("/getUUID")
