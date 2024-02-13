@@ -2,7 +2,7 @@
 <module version="4">
   <component name="AdditionalModuleElements">
     <content url="file://$MODULE_DIR$" dumb="true">
-      <excludeFolder url="file://$MODULE_DIR$/src/main/java/com/mySpring/demo/AMQP" />
+      <excludeFolder url="file://$MODULE_DIR$/meow-main/src/main/java/com/mySpring/demo/AMQP" />
     </content>
   </component>
 </module>
