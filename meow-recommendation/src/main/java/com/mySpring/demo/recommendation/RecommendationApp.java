@@ -1,11 +1,15 @@
 package com.mySpring.demo.recommendation;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+
 
 @SpringBootApplication
-@EnableScheduling
+@EnableFeignClients(basePackages = {"com.mySpring.demo.recommendation"})
+@ImportAutoConfiguration({FeignAutoConfiguration.class})
 public class RecommendationApp {
 
     public static void main(String[] args) {

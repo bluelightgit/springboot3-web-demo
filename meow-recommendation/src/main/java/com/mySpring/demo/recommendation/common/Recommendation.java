@@ -1,9 +1,9 @@
 package com.mySpring.demo.recommendation.common;
 
 import com.mySpring.demo.models.news.pojos.NewsES;
-import com.mySpring.demo.services.impl.NewsESService;
-import com.mySpring.demo.services.impl.UserService;
-import com.mySpring.demo.services.impl.VisitorService;
+import com.mySpring.demo.recommendation.feignClient.NewsESServiceClient;
+import com.mySpring.demo.recommendation.feignClient.VisitorServiceClient;
+
 import org.deeplearning4j.models.word2vec.Word2Vec;
 import org.deeplearning4j.text.stopwords.StopWords;
 import org.deeplearning4j.text.tokenization.tokenizer.Tokenizer;
@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
@@ -22,29 +23,29 @@ import java.util.stream.StreamSupport;
 public class Recommendation {
 
     @Autowired
-    VisitorService visitorService;
+    VisitorServiceClient visitorService;
+
+//    @Autowired
+//    UserServiceClient userService;
 
     @Autowired
-    UserService userService;
-
-    @Autowired
-    NewsESService newsESService;
+    NewsESServiceClient newsESService;
 
     private static final Logger logger = LoggerFactory.getLogger(Recommendation.class);
 
     public List<NewsES> getRecommendedNews(String uuid, boolean isRegisteredUser) throws IOException {
 
         logger.info("Generating recommendations for user: {}", uuid);
-        List<Long> historyList;
-        if (isRegisteredUser) {
-            historyList = userService.getHistory(userService.getUserByUUID(uuid).getId(), true);
-        } else {
-            historyList = visitorService.getHistory(uuid, true);
-        }
+        List<Long> historyList = visitorService.getVisitorHistory(uuid);
+//        if (isRegisteredUser) {
+//            historyList = userService.getHistory(userService.getUserByUUID(uuid).getId(), true);
+//        } else {
+//            historyList = visitorService.getVisitorHistory(uuid);
+//        }
 
         List<NewsES> historyNews = new ArrayList<>();
         for (Long history : historyList) {
-            historyNews.add(newsESService.getNewsES(history));
+            historyNews.add(newsESService.getNewsById(history));
         }
 
         // 将历史新闻标题转换为字符串列表
@@ -60,7 +61,7 @@ public class Recommendation {
         // WordVectors vec = WordVectorSerializer.loadTxtVectors(new File("src\\main\\resources\\static\\glove.6B.100d.txt"));
 
         // 获取所有新闻
-        Iterable<NewsES> allNews = newsESService.getAllNewsES();
+        Iterable<NewsES> allNews = newsESService.getAllNews();
 
         // 过滤掉历史新闻
         allNews = StreamSupport.stream(allNews.spliterator(), false)

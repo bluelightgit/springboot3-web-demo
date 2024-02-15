@@ -7,14 +7,13 @@ import com.mySpring.demo.services.impl.UserHistoryService;
 import com.mySpring.demo.services.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 
 import com.mySpring.demo.models.visitor.pojos.Visitor;
 import com.mySpring.demo.services.impl.VisitorService;
+
+import java.util.List;
 
 @RestController
 public class VisitorController {
@@ -44,6 +43,24 @@ public class VisitorController {
     @Operation(summary = "Get a visitor by id")
     public Visitor getVisitor(@RequestBody Long id) {
         return visitorService.getVisitor(id);
+    }
+
+    @GetMapping("/visitors/UUID/{UUID}")
+    @Operation(summary = "check if a visitor is blank")
+    public boolean isBlankVisitor(@PathVariable("UUID") String UUID) {
+        return visitorService.isBlankVisitor(UUID);
+    }
+
+    @GetMapping("/visitor/{UUID}/history")
+    @Operation(summary = "Get visitor history")
+    public List<Long> getVisitorHistory(@PathVariable("UUID") String UUID) {
+        return visitorService.getHistory(UUID, false);
+    }
+
+    @GetMapping("/visitor/{UUID}/distinctHistory")
+    @Operation(summary = "Get visitor distinct history")
+    public List<Long> getVisitorDistinctHistory(@PathVariable("UUID") String UUID) {
+        return visitorService.getHistory(UUID, true);
     }
 
     @PostMapping("/User/login")
@@ -87,6 +104,18 @@ public class VisitorController {
     @Operation(summary = "Create a user history")
     public void createUserHistory(@RequestBody Visitor visitor) {
         userHistoryService.createUserHistory(new UserHistory(userService.getUserByUUID(visitor.getUUID()), visitor.getNewsId()));
+    }
+
+    @GetMapping("/User/{UserID}/history")
+    @Operation(summary = "Get user history")
+    public List<Long> getUserHistory(@RequestBody Long UserID) {
+        return userHistoryService.getUserHistoryByUserId(UserID, false);
+    }
+
+    @GetMapping("/User/{UserID}/distinctHistory")
+    @Operation(summary = "Get user distinct history")
+    public List<Long> getUserDistinctHistory(@RequestBody Long UserID) {
+        return userHistoryService.getUserHistoryByUserId(UserID, true);
     }
 
 }

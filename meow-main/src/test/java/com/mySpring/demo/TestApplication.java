@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mySpring.demo.models.news.pojos.NewsES;
-import com.mySpring.demo.recommendation.Recommendation;
+
 import com.mySpring.demo.services.impl.NewsESService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,18 +42,6 @@ public class TestApplication {
         visitor.setUUID("testUUID");
         visitorService.createVisitor(visitor);
 
-    }
-
-    @Autowired
-    private Recommendation recommendation;
-
-    @Test
-    public void TestRecommendation() throws IOException {
-        String testUUID = "testUUID";
-        List<NewsES> newsList = recommendation.getRecommendedNews(testUUID, false);
-        for (NewsES news : newsList) {
-            System.out.println(news.getTitle());
-        }
     }
 
 

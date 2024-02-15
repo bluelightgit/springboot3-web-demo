@@ -1,4 +1,4 @@
-package com.mySpring.demo.CORSFilter;
+package com.mySpring.demo.recommendation.configuration;
 
 import java.io.IOException;
 
@@ -17,11 +17,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 @Component
-public class CORSFilter implements Filter {
-     
+public class WebConfig implements Filter {
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // System.out.println("init filter...");
     }
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -34,10 +33,8 @@ public class CORSFilter implements Filter {
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type,Access-Token,Authorization,ybg");
         filterChain.doFilter(servletRequest, servletResponse);
-        // System.out.println("filter is working...");
     }
     @Override
     public void destroy() {
-        // System.out.println("destroy filter...");
     }
 }
