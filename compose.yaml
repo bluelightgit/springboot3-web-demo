@@ -3,9 +3,7 @@ services:
     image: 'mysql:latest'
     environment:
       - 'MYSQL_DATABASE=mydatabase'
-      # - 'MYSQL_PASSWORD=secret'
       - 'MYSQL_ROOT_PASSWORD=123456'
-      # - 'MYSQL_USER=myuser'
     ports:
       - 3306:3306
     networks:
@@ -17,21 +15,69 @@ services:
     networks:
       - demo-net
 
-  zookeeper:
-    image: bitnami/zookeeper:3.8.3
-    ports:
-      - '2181:2181'
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-    networks:
-      - demo-net
+#  zookeeper:
+#    image: bitnami/zookeeper:3.8.3
+#    container_name: zookeeper
+#    hostname: zookeeper
+#    ports:
+#      - '2181:2181'
+#    environment:
+#      - ALLOW_ANONYMOUS_LOGIN=yes
+#    networks:
+#      - demo-net
+#
+#  kafka1:
+#    image: bitnami/kafka:3.6.0
+#    ports:
+#      - '9091:9091'
+#    networks:
+#      - demo-net
+#    environment:
+#      HOSTNAME: kafka1
+#      KAFKA_BROKER_ID: 0
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9091
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9091
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka
+#    extra_hosts:
+#      kafka1: 172.16.16.4
+#
+#  kafka2:
+#    image: bitnami/kafka:3.6.0
+#    ports:
+#      - '9092:9092'
+#    networks:
+#      - demo-net
+#    environment:
+#      HOSTNAME: kafka2
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9092
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka
+#    extra_hosts:
+#      kafka2: 172.16.16.4
+#
+#  kafka3:
+#    image: bitnami/kafka:3.6.0
+#    ports:
+#      - '9093:9093'
+#    networks:
+#      - demo-net
+#    environment:
+#      HOSTNAME: kafka3
+#      KAFKA_BROKER_ID: 2
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9093
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka
+#    extra_hosts:
+#      kafka3: 172.16.16.4
 
   kafka:
-    image: bitnami/kafka:3.6.0
+    image: bitnami/kafka:3.6
     ports:
-      - '9092:9092'
-    networks:
-      - demo-net
+      - "9092:9092"
+    hostname: kafka
+    volumes:
+      - "kafka_data:/bitnami"
     environment:
       # KRaft settings
       - KAFKA_CFG_NODE_ID=0
@@ -43,20 +89,8 @@ services:
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-    volumes:
-      - /docker-volume/kafka-persistence:/bitnami/kafka/config
-    depends_on:
-      - zookeeper
 
-  rabbitmq:
-    image: rabbitmq:3.12
-    environment:
-      - RABBIT_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=123456
-    ports:
-      - 8080:15672
-    networks:
-      - demo-net
+
 
   elasticsearch:
     hostname: elasticsearch
@@ -99,4 +133,7 @@ networks:
   demo-net:
     name: demo-net
     driver: bridge
-    
+
+volumes:
+  kafka_data:
+    driver: local

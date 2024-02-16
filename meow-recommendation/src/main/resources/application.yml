@@ -1,0 +1,13 @@
+server:
+  port: 8086
+
+spring:
+  security:
+    user:
+      name: meow
+      password: meow
+feign:
+  client:
+    config:
+      main-server:
+        url: http://localhost:8085
