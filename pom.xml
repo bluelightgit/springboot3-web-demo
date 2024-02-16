@@ -20,7 +20,8 @@
 	<modules>
 		<module>meow-main</module>
 		<module>meow-recommendation</module>
-	</modules>
+        <module>meow-eureka</module>
+    </modules>
 	<properties>
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -6,8 +6,11 @@ spring:
     user:
       name: meow
       password: meow
+
 feign:
   client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
     config:
       main-server:
         url: http://localhost:8085
