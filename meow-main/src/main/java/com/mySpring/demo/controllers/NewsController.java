@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mySpring.demo.models.news.dtos.UserUploadedNews;
 import com.mySpring.demo.models.news.dtos.ViewUpdate;
 import com.mySpring.demo.models.news.pojos.NewsES;
 import com.mySpring.demo.services.impl.NewsESService;
+import com.mySpring.demo.services.impl.UserUploadNewsService;
 import com.mySpring.demo.services.impl.ViewsUpdateProducerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +42,9 @@ public class NewsController {
     private NewsESService newsESService;
     @Autowired
     private VisitorService visitorService;
+
+    @Autowired
+    private UserUploadNewsService userUploadNewsService;
 
     private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
 
@@ -124,8 +130,8 @@ public class NewsController {
     }
 
     @PostMapping("/upload")
-    public void uploadNews(@RequestBody NewsES news) throws JsonProcessingException{
-        newsESService.addUploadNews(news);
+    public void uploadNews(@RequestBody UserUploadedNews userUploadedNews) throws JacksonException {
+        userUploadNewsService.addToTempNews(userUploadedNews);
     }
     @PostMapping("/test-request")
     public ResponseEntity<String> testPostRequest() {

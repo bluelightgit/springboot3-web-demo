@@ -3,10 +3,13 @@ package com.mySpring.demo;
 import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mySpring.demo.models.news.dtos.UserUploadedNews;
 import com.mySpring.demo.models.news.pojos.NewsES;
 
 import com.mySpring.demo.services.impl.NewsESService;
+import com.mySpring.demo.services.impl.UserUploadNewsService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +30,9 @@ public class TestApplication {
 
     @Autowired
     private NewsESService newsESService;
+
+    @Autowired
+    private UserUploadNewsService userUploadNewsService;
 
 
     @Test
@@ -49,17 +55,41 @@ public class TestApplication {
      * 测试Elasticsearch是否连接
      */
     @Test
-    public void TestElasticsearch() throws JsonProcessingException {
-        NewsES newsES = new NewsES();
-        newsES.setId(9999L);
-        newsES.setTitle("testTitle");
-        newsES.setContent("test".repeat(100));
-        newsES.setUrl("testUrl");
-        newsES.setPublishTime(0L);
-        newsES.setTag("testTag");
-        newsES.setImageUrl("https://www.google.co.jp/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png");
-        newsES.setViews(0L);
-        newsESService.addUploadNews(newsES);
+    public void TestUploadToElasticsearch() throws JacksonException {
+        UserUploadedNews userUploadedNews = new UserUploadedNews();
+        userUploadedNews.setId(9999L);
+        userUploadedNews.setTitle("test");
+        userUploadedNews.setContent("test");
+        userUploadedNews.setUrl("test");
+        userUploadedNews.setImageUrl("test");
+        userUploadedNews.setTag("test");
+        userUploadedNews.setPublishTime(9999L);
+        userUploadedNews.setViews(9999L);
+        userUploadedNews.setUserId(0L);
+        userUploadedNews.setUsername("testUsername");
+        userUploadedNews.setStatus(0);
+        try {
+            userUploadNewsService.addToTempNews(userUploadedNews);
+            System.out.println("add to tempNews success");
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        List<UserUploadedNews> tempNews = userUploadNewsService.getTempNews();
+        for (UserUploadedNews news : tempNews) {
+            System.out.println(news.getTitle());
+        }
+        try {
+            userUploadNewsService.changeStatus(tempNews.get(0), 2);
+            System.out.println("change status to reject success");
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        try {
+            userUploadNewsService.submitTempNews(tempNews);
+            System.out.println("submit tempNews success");
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
     }
     @Test
@@ -69,7 +99,8 @@ public class TestApplication {
 
     @Test
     public void TestGetMaxId() {
-        System.out.println(newsESService.getMaxId());
+        userUploadNewsService.setMaxId();
+        System.out.println(userUploadNewsService.maxId.get());
     }
 
     @Test

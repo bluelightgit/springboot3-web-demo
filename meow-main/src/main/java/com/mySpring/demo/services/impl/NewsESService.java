@@ -175,29 +175,30 @@ public class NewsESService implements INewsESService {
 //    public void addUploadNews(NewsES newsES) {
 //        uploadNews.add(newsES);
 //    }
-    @Scheduled(fixedRate = TICK) // 1 seconds
-    public void processUploadNews() throws JsonProcessingException {
-        String news = stringRedisTemplate.opsForList().leftPop("uploadNews");
-        if (news == null) {
-            return;
-        }
-        Long maxId = getMaxId();
-        logger.info("current Max id: {}", maxId);
-        long count = 1;
-        while (news != null) {
-            NewsES newsES = objectMapper.readValue(news, NewsES.class);
-            newsES.setId(maxId + count);
-            count++;
-            newsESRepository.save(newsES);
-            logger.info("Upload news: {}, Id: {}", newsES.getTitle(), newsES.getId());
-            news = stringRedisTemplate.opsForList().leftPop("uploadNews");
-        }
-        logger.info("Upload {} news", count - 1);
-    }
 
-    public void addUploadNews(NewsES newsES) throws JsonProcessingException {
-        stringRedisTemplate.opsForList().rightPush("uploadNews", objectMapper.writeValueAsString(newsES));
-    }
+//    @Scheduled(fixedRate = TICK) // 1 seconds
+//    public void processUploadNews() throws JsonProcessingException {
+//        String news = stringRedisTemplate.opsForList().leftPop("uploadNews");
+//        if (news == null) {
+//            return;
+//        }
+//        Long maxId = getMaxId();
+//        logger.info("current Max id: {}", maxId);
+//        long count = 1;
+//        while (news != null) {
+//            NewsES newsES = objectMapper.readValue(news, NewsES.class);
+//            newsES.setId(maxId + count);
+//            count++;
+//            newsESRepository.save(newsES);
+//            logger.info("Upload news: {}, Id: {}", newsES.getTitle(), newsES.getId());
+//            news = stringRedisTemplate.opsForList().leftPop("uploadNews");
+//        }
+//        logger.info("Upload {} news", count - 1);
+//    }
+//
+//    public void addUploadNews(NewsES newsES) throws JsonProcessingException {
+//        stringRedisTemplate.opsForList().rightPush("uploadNews", objectMapper.writeValueAsString(newsES));
+//    }
 
     public Long getMaxId() {
         List<NewsES> newsESList = newsESRepository.findByPublishTimeBetweenOrderByIdDesc(0L, System.currentTimeMillis() / 1000L + 60000L);
