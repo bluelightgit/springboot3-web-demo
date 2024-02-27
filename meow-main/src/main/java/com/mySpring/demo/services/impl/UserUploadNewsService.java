@@ -15,8 +15,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static com.mySpring.demo.constant.RedisPrefix.TEMP_NEWS_PREFIX;
 
 
 @Service
@@ -48,15 +51,18 @@ public class UserUploadNewsService {
     public void addToTempNews(UserUploadedNews userUploadedNews) throws JacksonException {
         long tempId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
         userUploadedNews.setId(tempId);
-        stringRedisTemplate.opsForList().rightPush(String.valueOf(tempId), objectMapper.writeValueAsString(userUploadedNews));
+        stringRedisTemplate.opsForValue().set(TEMP_NEWS_PREFIX + tempId, objectMapper.writeValueAsString(userUploadedNews));
     }
 
     public List<UserUploadedNews> getTempNews() throws JacksonException {
-        List<String> tempNews = stringRedisTemplate.opsForList().range("tempNews", 0, -1);
+        Set<String> keys = stringRedisTemplate.keys(TEMP_NEWS_PREFIX + "*");
         List<UserUploadedNews> userUploadedNews = new ArrayList<>();
-        if (tempNews != null) {
-            for (String news : tempNews) {
-                userUploadedNews.add(objectMapper.readValue(news, UserUploadedNews.class));
+        if (keys != null) {
+            for (String key : keys) {
+                String news = stringRedisTemplate.opsForValue().get(key);
+                if (news != null) {
+                    userUploadedNews.add(objectMapper.readValue(news, UserUploadedNews.class));
+                }
             }
         }
         return userUploadedNews;
@@ -77,9 +83,9 @@ public class UserUploadNewsService {
                 newsES.setViews(news.getViews());
                 newsESRepository.save(newsES);
 
-                stringRedisTemplate.opsForList().remove("tempNews", 1, objectMapper.writeValueAsString(news));
+                stringRedisTemplate.delete(TEMP_NEWS_PREFIX + news.getId());
             } else if (news.getStatus() == 2) {
-                stringRedisTemplate.opsForList().remove("tempNews", 1, objectMapper.writeValueAsString(news));
+                stringRedisTemplate.delete(TEMP_NEWS_PREFIX + news.getId());
             }
 
         }
@@ -92,6 +98,6 @@ public class UserUploadNewsService {
      */
     public void changeStatus(UserUploadedNews userUploadedNews, int status) throws JsonProcessingException {
         userUploadedNews.setStatus(status);
-        stringRedisTemplate.opsForHash().put("tempNews", String.valueOf(userUploadedNews.getId()), objectMapper.writeValueAsString(userUploadedNews));
+        stringRedisTemplate.opsForValue().set(TEMP_NEWS_PREFIX + userUploadedNews.getId(), objectMapper.writeValueAsString(userUploadedNews));
     }
 }

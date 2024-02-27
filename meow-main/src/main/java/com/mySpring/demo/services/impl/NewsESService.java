@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.mySpring.demo.constant.GlobalScheduledTime.TICK;
+import static com.mySpring.demo.constant.RedisPrefix.VIEWS_PREFIX;
 
 @Service
 public class NewsESService implements INewsESService {
@@ -126,30 +127,46 @@ public class NewsESService implements INewsESService {
 //        viewsMap.clear();
 //    }
     public void increaseViews(Long id) throws JsonProcessingException {
-        Long views = stringRedisTemplate.opsForValue().increment(id.toString());
-        String viewUpdateJson = objectMapper.writeValueAsString(new ViewUpdate(id, views));
-        stringRedisTemplate.convertAndSend("viewsChannel", viewUpdateJson);
-
+        String views = stringRedisTemplate.opsForValue().get(VIEWS_PREFIX + id);
+        if (views == null) {
+            Optional<NewsES> optionalNewsES = newsESRepository.findById(id);
+            NewsES newsES = optionalNewsES.orElse(null);
+            if (newsES != null) {
+                views = String.valueOf(newsES.getViews());
+                stringRedisTemplate.opsForValue().set(VIEWS_PREFIX + id, views);
+            }
+        }
+        stringRedisTemplate.opsForValue().increment(VIEWS_PREFIX + id);
     }
 
     @Scheduled(fixedRate = TICK) // 1 seconds
     public void updateViews() {
-        Set<String> keys = stringRedisTemplate.keys("*");
+        Set<String> keys = stringRedisTemplate.keys(VIEWS_PREFIX + "*");
         if (keys != null) {
             keys.forEach(key -> {
-                // Check if the key can be converted to a Long
-                if (key.matches("\\d+")) {
-                    Optional<NewsES> optionalNewsES = newsESRepository.findById(Long.valueOf(key));
-                    NewsES newsES = optionalNewsES.orElse(null);
-                    String value = stringRedisTemplate.opsForValue().get(key);
-                    if (newsES != null && value != null) {
-                        newsES.setViews((long) Integer.parseInt(value));
-                        newsESRepository.save(newsES);
-                    }
+                Long newsId = Long.parseLong(key.substring(VIEWS_PREFIX.length()));
+                Optional<NewsES> optionalNewsES = newsESRepository.findById(newsId);
+                NewsES newsES = optionalNewsES.orElse(null);
+                String value = stringRedisTemplate.opsForValue().get(key);
+                if (newsES != null && value != null) {
+                    newsES.setViews(Long.parseLong(value));
+                    newsESRepository.save(newsES);
                 }
             });
         }
     }
+    public Long getViews(Long id) {
+        String views = stringRedisTemplate.opsForValue().get(VIEWS_PREFIX + id);
+        if (views == null) {
+            NewsES newsES = newsESRepository.findById(id).orElse(null);
+            if (newsES != null && newsES.getViews() != null) {
+                views = String.valueOf(newsES.getViews());
+                stringRedisTemplate.opsForValue().set(VIEWS_PREFIX + id, views);
+            }
+        }
+        return Long.parseLong(views);
+    }
+
     /**
      * ID自增&阻塞队列定时上传新闻
      */
@@ -200,10 +217,10 @@ public class NewsESService implements INewsESService {
 //        stringRedisTemplate.opsForList().rightPush("uploadNews", objectMapper.writeValueAsString(newsES));
 //    }
 
-    public Long getMaxId() {
-        List<NewsES> newsESList = newsESRepository.findByPublishTimeBetweenOrderByIdDesc(0L, System.currentTimeMillis() / 1000L + 60000L);
-        return newsESList.get(0).getId();
-    }
+//    public Long getMaxId() {
+//        List<NewsES> newsESList = newsESRepository.findByPublishTimeBetweenOrderByIdDesc(0L, System.currentTimeMillis() / 1000L + 60000L);
+//        return newsESList.get(0).getId();
+//    }
 //    public Long getMaxId() {
 //
 //        SearchRequest searchRequest = new SearchRequest("news");
@@ -227,19 +244,5 @@ public class NewsESService implements INewsESService {
 //        }
 //        return maxId;
 //    }
-
-    /**
-     * 实时views
-     */
-    public Long getViews(Long id) throws JsonProcessingException {
-        String views = stringRedisTemplate.opsForValue().get(id.toString());
-        if (views == null) {
-            Long tmp = Objects.requireNonNull(newsESRepository.findById(id).orElse(null)).getViews();
-            if (tmp != null) {
-                stringRedisTemplate.convertAndSend("viewsChannel", objectMapper.writeValueAsString(new ViewUpdate(id, tmp)));
-            }
-        }
-        return Long.parseLong(views);
-    }
 
 }

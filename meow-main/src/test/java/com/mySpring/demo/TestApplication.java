@@ -57,7 +57,6 @@ public class TestApplication {
     @Test
     public void TestUploadToElasticsearch() throws JacksonException {
         UserUploadedNews userUploadedNews = new UserUploadedNews();
-        userUploadedNews.setId(9999L);
         userUploadedNews.setTitle("test");
         userUploadedNews.setContent("test");
         userUploadedNews.setUrl("test");
@@ -79,8 +78,8 @@ public class TestApplication {
             System.out.println(news.getTitle());
         }
         try {
-            userUploadNewsService.changeStatus(tempNews.get(0), 2);
-            System.out.println("change status to reject success");
+            userUploadNewsService.changeStatus(tempNews.get(0), 1);
+            System.out.println("change status to approved success");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -90,11 +89,20 @@ public class TestApplication {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
     }
+
+    @Test
+    public void TestViewsFunctions() throws JsonProcessingException {
+        userUploadNewsService.setMaxId();
+        newsESService.increaseViews(userUploadNewsService.maxId.get());
+        newsESService.updateViews();
+        System.out.println(newsESService.getViews(userUploadNewsService.maxId.get()));
+    }
+
     @Test
     public void TestDeleteES() {
-        newsESService.deleteNewsES(9999L);
+        userUploadNewsService.setMaxId();
+        newsESService.deleteNewsES(userUploadNewsService.maxId.get());
     }
 
     @Test
