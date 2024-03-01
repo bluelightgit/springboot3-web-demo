@@ -73,7 +73,7 @@ public class TestApplication {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        List<UserUploadedNews> tempNews = userUploadNewsService.getTempNews();
+        List<UserUploadedNews> tempNews = userUploadNewsService.getAllTempNews();
         for (UserUploadedNews news : tempNews) {
             System.out.println(news.getTitle());
         }
@@ -84,7 +84,7 @@ public class TestApplication {
             e.printStackTrace();
         }
         try {
-            userUploadNewsService.submitTempNews(tempNews);
+            userUploadNewsService.submitTempNews();
             System.out.println("submit tempNews success");
         } catch (JsonProcessingException e) {
             e.printStackTrace();

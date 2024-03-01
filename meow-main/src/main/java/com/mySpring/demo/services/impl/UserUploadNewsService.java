@@ -5,12 +5,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mySpring.demo.models.news.dtos.UserUploadedNews;
 import com.mySpring.demo.models.news.pojos.NewsES;
+import com.mySpring.demo.models.response.StatusResponse;
 import com.mySpring.demo.repositories.NewsESRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,7 +39,11 @@ public class UserUploadNewsService {
     @Autowired
     ObjectMapper objectMapper;
 
+    private final static Logger loger = LoggerFactory.getLogger(UserUploadNewsService.class);
+
     public AtomicLong maxId = new AtomicLong(-1);
+
+//    private List<UserUploadedNews> tempNews = new ArrayList<>();
 
     public void setMaxId() {
         if (this.maxId.get() == -1) {
@@ -54,7 +63,7 @@ public class UserUploadNewsService {
         stringRedisTemplate.opsForValue().set(TEMP_NEWS_PREFIX + tempId, objectMapper.writeValueAsString(userUploadedNews));
     }
 
-    public List<UserUploadedNews> getTempNews() throws JacksonException {
+    public List<UserUploadedNews> getAllTempNews() throws JacksonException {
         Set<String> keys = stringRedisTemplate.keys(TEMP_NEWS_PREFIX + "*");
         List<UserUploadedNews> userUploadedNews = new ArrayList<>();
         if (keys != null) {
@@ -65,39 +74,74 @@ public class UserUploadNewsService {
                 }
             }
         }
+//        this.tempNews = userUploadedNews;
         return userUploadedNews;
     }
 
-    public void submitTempNews(List<UserUploadedNews> tempNews) throws JacksonException {
+    public UserUploadedNews getTempNewsById(Long id) throws JacksonException {
+        String news = stringRedisTemplate.opsForValue().get(TEMP_NEWS_PREFIX + id);
+        if (news != null) {
+            return objectMapper.readValue(news, UserUploadedNews.class);
+        }
+        return null;
+    }
+
+    public ResponseEntity<?> submitTempNews() throws JacksonException {
         setMaxId();
-        for (UserUploadedNews news : tempNews) {
-            if (news.getStatus() == 1) {
-                NewsES newsES = new NewsES();
-                newsES.setId(maxId.incrementAndGet());
-                newsES.setTitle(news.getTitle());
-                newsES.setContent(news.getContent());
-                newsES.setUrl(news.getUrl());
-                newsES.setImageUrl(news.getImageUrl());
-                newsES.setTag(news.getTag());
-                newsES.setPublishTime(news.getPublishTime());
-                newsES.setViews(news.getViews());
-                newsESRepository.save(newsES);
-
-                stringRedisTemplate.delete(TEMP_NEWS_PREFIX + news.getId());
-            } else if (news.getStatus() == 2) {
-                stringRedisTemplate.delete(TEMP_NEWS_PREFIX + news.getId());
+        int count = 0;
+        StatusResponse statusResponse = new StatusResponse();
+        try {
+            List<UserUploadedNews> tempNews = getAllTempNews();
+            for (UserUploadedNews news : tempNews) {
+                if (news.getStatus() == 1) {
+                    NewsES newsES = new NewsES();
+                    newsES.setId(maxId.incrementAndGet());
+                    newsES.setTitle(news.getTitle());
+                    newsES.setContent(news.getContent());
+                    newsES.setUrl(news.getUrl());
+                    newsES.setImageUrl(news.getImageUrl());
+                    newsES.setTag(news.getTag());
+                    newsES.setPublishTime(news.getPublishTime());
+                    newsES.setViews(news.getViews());
+                    newsESRepository.save(newsES);
+                    stringRedisTemplate.delete(TEMP_NEWS_PREFIX + news.getId());
+                    count++;
+                } else if (news.getStatus() == 2) {
+                    stringRedisTemplate.delete(TEMP_NEWS_PREFIX + news.getId());
+                }
             }
-
+            statusResponse.setStatus(HttpStatus.OK.value());
+            statusResponse.setMessage("Submit success");
+            loger.info("Submit {} news", count);
+            loger.info("current max id: {}", maxId.get());
+            return new ResponseEntity<>(statusResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            statusResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            statusResponse.setMessage(e.getMessage());
+            return new ResponseEntity<>(statusResponse, HttpStatus.BAD_REQUEST);
         }
     }
+
 
     /**
      * Change the status of the news and update to the redis
      * @param userUploadedNews
      * @param status
+     * @return
+     * @throws JsonProcessingException
      */
-    public void changeStatus(UserUploadedNews userUploadedNews, int status) throws JsonProcessingException {
+    public ResponseEntity<?> changeStatus(UserUploadedNews userUploadedNews, int status) throws JsonProcessingException {
         userUploadedNews.setStatus(status);
-        stringRedisTemplate.opsForValue().set(TEMP_NEWS_PREFIX + userUploadedNews.getId(), objectMapper.writeValueAsString(userUploadedNews));
+        StatusResponse statusResponse = new StatusResponse();
+        try {
+            stringRedisTemplate.opsForValue().set(TEMP_NEWS_PREFIX + userUploadedNews.getId(), objectMapper.writeValueAsString(userUploadedNews));
+            statusResponse.setStatus(HttpStatus.OK.value());
+            statusResponse.setMessage("Update status success");
+            return new ResponseEntity<>(statusResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            statusResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            statusResponse.setMessage(e.getMessage());
+            return new ResponseEntity<>(statusResponse, HttpStatus.BAD_REQUEST);
+        }
     }
 }

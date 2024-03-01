@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.mySpring.demo.constant.GlobalScheduledTime.TICK;
+import static com.mySpring.demo.constant.KafkaTopic.VIEW_UPDATE_TOPIC;
 import static com.mySpring.demo.constant.RedisPrefix.VIEWS_PREFIX;
 
 @Service
@@ -137,9 +138,10 @@ public class NewsESService implements INewsESService {
             }
         }
         stringRedisTemplate.opsForValue().increment(VIEWS_PREFIX + id);
+        sendViewUpdateMessage(new ViewUpdate(id, Long.parseLong(Objects.requireNonNull(views))));
     }
 
-    @Scheduled(fixedRate = TICK) // 1 seconds
+//    @Scheduled(fixedRate = TICK) // 1 seconds
     public void updateViews() {
         Set<String> keys = stringRedisTemplate.keys(VIEWS_PREFIX + "*");
         if (keys != null) {
@@ -165,6 +167,10 @@ public class NewsESService implements INewsESService {
             }
         }
         return Long.parseLong(views);
+    }
+
+    private void sendViewUpdateMessage(ViewUpdate viewUpdate) throws JsonProcessingException {
+        kafkaTemplate.send(VIEW_UPDATE_TOPIC, objectMapper.writeValueAsString(viewUpdate));
     }
 
     /**

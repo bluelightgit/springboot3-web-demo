@@ -104,14 +104,14 @@ public class NewsController {
 
     }
 
-    @Value("${kafka.topic.views-update-topic}")
-    private String viewsUpdateTopic;
-
-    private final ViewsUpdateProducerService viewsUpdateProducerService;
-
-    public NewsController(ViewsUpdateProducerService viewsUpdateProducerService) {
-        this.viewsUpdateProducerService = viewsUpdateProducerService;
-    }
+//    @Value("${kafka.topic.views-update-topic}")
+//    private String viewsUpdateTopic;
+//
+//    private final ViewsUpdateProducerService viewsUpdateProducerService;
+//
+//    public NewsController(ViewsUpdateProducerService viewsUpdateProducerService) {
+//        this.viewsUpdateProducerService = viewsUpdateProducerService;
+//    }
     @PostMapping("/addView")
     public void addView(@RequestBody Long id) throws JsonProcessingException {
         newsESService.increaseViews(id);
