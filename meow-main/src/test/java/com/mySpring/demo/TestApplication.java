@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mySpring.demo.langchain.SentimentExtracting;
 import com.mySpring.demo.models.news.dtos.UserUploadedNews;
 import com.mySpring.demo.models.news.pojos.NewsES;
 
 import com.mySpring.demo.services.impl.NewsESService;
 import com.mySpring.demo.services.impl.UserUploadNewsService;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -116,6 +118,20 @@ public class TestApplication {
         List<NewsES> newsList = newsESService.getHottestOfWeek();
         for (NewsES news : newsList) {
             System.out.println(news.getTitle());
+        }
+    }
+
+    @Autowired
+    private OpenAiChatModel chatLanguageModel;
+
+    @Test
+    public void TestSentimentExtracting() {
+        String content = "fucking nigger";
+        SentimentExtracting sentimentExtracting = new SentimentExtracting(chatLanguageModel);
+        if (sentimentExtracting.isInvalidSentiment(content)) {
+            System.out.println("Invalid content");
+        } else {
+            System.out.println("Valid content");
         }
     }
 

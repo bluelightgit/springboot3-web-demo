@@ -3,10 +3,12 @@ package com.mySpring.demo.services.impl;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mySpring.demo.langchain.SentimentExtracting;
 import com.mySpring.demo.models.news.dtos.UserUploadedNews;
 import com.mySpring.demo.models.news.pojos.NewsES;
 import com.mySpring.demo.models.response.StatusResponse;
 import com.mySpring.demo.repositories.NewsESRepository;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ public class UserUploadNewsService {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    private OpenAiChatModel chatLanguageModel;
 
     private final static Logger loger = LoggerFactory.getLogger(UserUploadNewsService.class);
 
@@ -124,7 +129,7 @@ public class UserUploadNewsService {
 
 
     /**
-     * Change the status of the news and update to the redis
+     * Change the status of the news and update to the redis, status 0: pending, 1: approved, 2: rejected
      * @param userUploadedNews
      * @param status
      * @return
@@ -133,6 +138,40 @@ public class UserUploadNewsService {
     public ResponseEntity<?> changeStatus(UserUploadedNews userUploadedNews, int status) throws JsonProcessingException {
         userUploadedNews.setStatus(status);
         StatusResponse statusResponse = new StatusResponse();
+        try {
+            stringRedisTemplate.opsForValue().set(TEMP_NEWS_PREFIX + userUploadedNews.getId(), objectMapper.writeValueAsString(userUploadedNews));
+            statusResponse.setStatus(HttpStatus.OK.value());
+            statusResponse.setMessage("Update status success");
+            return new ResponseEntity<>(statusResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            statusResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            statusResponse.setMessage(e.getMessage());
+            return new ResponseEntity<>(statusResponse, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Review the news by AI (sentiment analysis)
+     * @param userUploadedNews
+     * @return
+     * @throws JsonProcessingException
+     */
+    public ResponseEntity<?> reviewByAI(UserUploadedNews userUploadedNews) throws JsonProcessingException {
+        StatusResponse statusResponse = new StatusResponse();
+        try {
+            SentimentExtracting sentimentExtracting = new SentimentExtracting(chatLanguageModel);
+            boolean isInvalidNewsTitle = sentimentExtracting.isInvalidSentiment(userUploadedNews.getTitle());
+            boolean isInvalidNewsContent = sentimentExtracting.isInvalidSentiment(userUploadedNews.getContent());
+            if (isInvalidNewsTitle || isInvalidNewsContent) {
+                userUploadedNews.setStatus(2); // rejected
+            } else {
+                userUploadedNews.setStatus(1); // approved
+            }
+        } catch (Exception e) {
+            statusResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+            statusResponse.setMessage(e.getMessage());
+            return new ResponseEntity<>(statusResponse, HttpStatus.BAD_REQUEST);
+        }
         try {
             stringRedisTemplate.opsForValue().set(TEMP_NEWS_PREFIX + userUploadedNews.getId(), objectMapper.writeValueAsString(userUploadedNews));
             statusResponse.setStatus(HttpStatus.OK.value());
