@@ -46,10 +46,8 @@ kafka:
   topic:
     views-update-topic: views-update-topic
 
-#ApiKeys:
-#  OPENAI_API_KEY: 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
 
 langchain4j:
   open-ai:
     chat-model:
-      api-key: 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
+      api-key: sk-your-api-key
