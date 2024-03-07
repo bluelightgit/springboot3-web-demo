@@ -62,10 +62,11 @@ public class UserUploadNewsService {
         }
     }
 
-    public void addToTempNews(UserUploadedNews userUploadedNews) throws JacksonException {
+    public ResponseEntity<?> addToTempNews(UserUploadedNews userUploadedNews) throws JacksonException {
         long tempId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
         userUploadedNews.setId(tempId);
         stringRedisTemplate.opsForValue().set(TEMP_NEWS_PREFIX + tempId, objectMapper.writeValueAsString(userUploadedNews));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public List<UserUploadedNews> getAllTempNews() throws JacksonException {

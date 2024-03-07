@@ -39,4 +39,6 @@ public class AdminController {
     public ResponseEntity<?> submitNews(@RequestBody long id) throws JacksonException {
         return userUploadNewsService.submitTempNews();
     }
+
+    
 }

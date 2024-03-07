@@ -112,21 +112,6 @@ public class NewsESService implements INewsESService {
      * 增加浏览量
      * @param id
      */
-//    public void increaseViews(Long id) {
-//        viewsMap.compute(id, (k, v) -> v == null ? 1 : v + 1);
-//    }
-//    @Scheduled(fixedRate = 1000) // 1 seconds
-//    public void updateViews() {
-//        viewsMap.forEach((k, v) -> {
-//            Optional<NewsES> optionalNewsES = newsESRepository.findById(k);
-//            NewsES newsES = optionalNewsES.orElse(null);
-//            if (newsES != null) {
-//                newsES.setViews(newsES.getViews() + v);
-//                newsESRepository.save(newsES);
-//            }
-//        });
-//        viewsMap.clear();
-//    }
     public void increaseViews(Long id) throws JsonProcessingException {
         String views = stringRedisTemplate.opsForValue().get(VIEWS_PREFIX + id);
         if (views == null) {
@@ -138,10 +123,10 @@ public class NewsESService implements INewsESService {
             }
         }
         stringRedisTemplate.opsForValue().increment(VIEWS_PREFIX + id);
-        sendViewUpdateMessage(new ViewUpdate(id, Long.parseLong(Objects.requireNonNull(views))));
+//        sendViewUpdateMessage(new ViewUpdate(id, Long.parseLong(Objects.requireNonNull(views))));
     }
 
-//    @Scheduled(fixedRate = TICK) // 1 seconds
+    @Scheduled(fixedRate = TICK) // 1 seconds
     public void updateViews() {
         Set<String> keys = stringRedisTemplate.keys(VIEWS_PREFIX + "*");
         if (keys != null) {

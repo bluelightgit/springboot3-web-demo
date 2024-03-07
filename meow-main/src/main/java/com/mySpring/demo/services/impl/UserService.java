@@ -6,6 +6,7 @@ import com.mySpring.demo.models.user.dtos.LoginRequest;
 import com.mySpring.demo.models.user.pojos.User;
 import com.mySpring.demo.repositories.UserHistoryRepository;
 import com.mySpring.demo.repositories.UserRepository;
+import com.mySpring.demo.utils.JwtTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,9 @@ public class UserService implements IUserService {
     private UserHistoryRepository userHistoryRepository;
 
     // 使用缓存存储用户信息
-//    @Autowired
-//    private RedisTemplate<String, User> redisTemplate;
+    //    @Autowired
+    //    private RedisTemplate<String, User> redisTemplate;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
 
     private final static Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -82,6 +82,7 @@ public class UserService implements IUserService {
                 logger.info("New user registered: {}", user.getUsername());
                 statusResponse.setStatus(HttpStatus.OK.value());
                 statusResponse.setMessage("Register success");
+                statusResponse.setToken(JwtTokenProvider.generateToken(user));
                 return new ResponseEntity<>(statusResponse, HttpStatus.OK);
             }
         } catch (Exception e){
@@ -103,6 +104,7 @@ public class UserService implements IUserService {
                 logger.info("User logged in: {}, id: {}", userDetails.getUsername(), userDetails.getId());
                 statusResponse.setStatus(HttpStatus.OK.value());
                 statusResponse.setMessage("Login success");
+                statusResponse.setToken(JwtTokenProvider.generateToken(userDetails));
                 return new ResponseEntity<>(statusResponse, HttpStatus.OK);
             }
         } catch (Exception e) {

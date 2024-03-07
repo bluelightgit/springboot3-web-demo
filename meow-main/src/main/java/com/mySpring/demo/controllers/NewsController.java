@@ -8,16 +8,18 @@ import java.util.List;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mySpring.demo.models.news.dtos.UserUploadedNews;
-import com.mySpring.demo.models.news.dtos.ViewUpdate;
 import com.mySpring.demo.models.news.pojos.NewsES;
+import com.mySpring.demo.models.user.pojos.User;
 import com.mySpring.demo.services.impl.NewsESService;
+import com.mySpring.demo.services.impl.UserService;
 import com.mySpring.demo.services.impl.UserUploadNewsService;
-import com.mySpring.demo.services.impl.ViewsUpdateProducerService;
+import com.mySpring.demo.utils.JwtTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,9 +46,18 @@ public class NewsController {
     private VisitorService visitorService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private UserUploadNewsService userUploadNewsService;
 
     private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
+
+    private final HttpServletRequest request;
+
+    public NewsController(HttpServletRequest request) {
+        this.request = request;
+    }
 
     @GetMapping
     public List<NewsES> getAllNews() {
@@ -130,8 +141,27 @@ public class NewsController {
     }
 
     @PostMapping("/upload")
-    public void uploadNews(@RequestBody UserUploadedNews userUploadedNews) throws JacksonException {
-        userUploadNewsService.addToTempNews(userUploadedNews);
+    public ResponseEntity<?> uploadNews(@RequestBody UserUploadedNews userUploadedNews) throws JacksonException {
+        // 从请求头中获取Authorization字段的值
+        String authorizationHeader = request.getHeader("Authorization");
+
+        // 解析Token
+        String token = authorizationHeader.replace("Bearer ", "");
+        User user;
+        try {
+            user = JwtTokenProvider.getUserFromToken(token);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        if (user == null ||
+                userService.getUserByUsername(user.getUsername()) == null ||
+                userService.getUser(user.getId()) == null
+        ) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        userUploadedNews.setUserId(user.getId());
+        userUploadedNews.setUsername(user.getUsername());
+        return userUploadNewsService.addToTempNews(userUploadedNews);
     }
     @PostMapping("/test-request")
     public ResponseEntity<String> testPostRequest() {
