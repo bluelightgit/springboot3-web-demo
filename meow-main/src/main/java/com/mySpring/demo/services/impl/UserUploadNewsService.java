@@ -41,8 +41,8 @@ public class UserUploadNewsService {
     @Autowired
     ObjectMapper objectMapper;
 
-    @Autowired
-    private OpenAiChatModel chatLanguageModel;
+//    @Autowired
+//    private OpenAiChatModel chatLanguageModel;
 
     private final static Logger loger = LoggerFactory.getLogger(UserUploadNewsService.class);
 
@@ -157,8 +157,9 @@ public class UserUploadNewsService {
      * @return
      * @throws JsonProcessingException
      */
-    public ResponseEntity<?> reviewByAI(UserUploadedNews userUploadedNews) throws JsonProcessingException {
+    public ResponseEntity<?> reviewByAI(UserUploadedNews userUploadedNews, String apiKey) throws JsonProcessingException {
         StatusResponse statusResponse = new StatusResponse();
+        OpenAiChatModel chatLanguageModel = OpenAiChatModel.withApiKey(apiKey);
         try {
             SentimentExtracting sentimentExtracting = new SentimentExtracting(chatLanguageModel);
             boolean isInvalidNewsTitle = sentimentExtracting.isInvalidSentiment(userUploadedNews.getTitle());

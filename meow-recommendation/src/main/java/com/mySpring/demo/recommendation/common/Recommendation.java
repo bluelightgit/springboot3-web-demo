@@ -4,6 +4,8 @@ import com.mySpring.demo.models.news.pojos.NewsES;
 import com.mySpring.demo.recommendation.feignClient.NewsESServiceClient;
 import com.mySpring.demo.recommendation.feignClient.VisitorServiceClient;
 
+import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
+import org.deeplearning4j.models.embeddings.wordvectors.WordVectors;
 import org.deeplearning4j.models.word2vec.Word2Vec;
 import org.deeplearning4j.text.stopwords.StopWords;
 import org.deeplearning4j.text.tokenization.tokenizer.Tokenizer;
@@ -16,6 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -58,7 +65,7 @@ public class Recommendation {
         model.train(historyTitles);
         Word2Vec vec = model.getVec();
 
-        // WordVectors vec = WordVectorSerializer.loadTxtVectors(new File("src\\main\\resources\\static\\glove.6B.100d.txt"));
+//         WordVectors vec = WordVectorSerializer.loadTxtVectors(new File(""));
 
         // 获取所有新闻
         Iterable<NewsES> allNews = newsESService.getAllNews();
@@ -69,33 +76,39 @@ public class Recommendation {
                 .collect(Collectors.toList());
 
         // 计算历史新闻与所有新闻的相似度
-        Map<NewsES, Double> similarityScores = new HashMap<>();
+        Map<NewsES, Double> similarityScores = new ConcurrentHashMap<>();
 
         Tokenizer tokenizer_0 = new DefaultTokenizerFactory().create(
                 convertList2String(historyTitles)
         );
         List<String> historyKeyWords = tokenizer_0.getTokens();
 
+        int numThreads = Runtime.getRuntime().availableProcessors(); // 获取可用的处理器核心数
+        ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
+        ReentrantLock lock = new ReentrantLock();
         for (NewsES news : allNews) {
-            double similarity = 0;
-            int count = 0;
-            Tokenizer tokenizer = new DefaultTokenizerFactory().create(
-                    convertString2String(news.getTitle())
-            );
-            List<String> keyWords = tokenizer.getTokens();
-            for (String historyKeyWord : historyKeyWords) {
-                for (String keyWord : keyWords) {
-                    double temp = vec.similarity(historyKeyWord, keyWord);
-                    if (temp > 0.3) {
-                        similarity += temp;
-                        count += 1;
+            executorService.submit(() -> {
+                double similarity = 0;
+                Tokenizer tokenizer = new DefaultTokenizerFactory().create(convertString2String(news.getTitle()));
+                List<String> keyWords = tokenizer.getTokens();
+                for (String historyKeyWord : historyKeyWords) {
+                    for (String keyWord : keyWords) {
+                        double temp = vec.similarity(historyKeyWord, keyWord);
+                        if (temp > 0.3) {
+                            similarity += temp;
+                        }
                     }
                 }
-            }
-            similarityScores.put(news, similarity);
-            // if (similarity > 0.1) {
-            //     System.out.println(news.getTitle() + " : " + similarity);
-            // }
+                similarityScores.put(news, similarity);
+            });
+        }
+
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+        } catch (InterruptedException e) {
+            logger.error("Thread execution interrupted: {}", e.getMessage());
+            Thread.currentThread().interrupt();
         }
 
         // 根据相似度排序，选择最相似的新闻推荐给用户

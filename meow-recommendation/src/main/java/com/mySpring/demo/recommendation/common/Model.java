@@ -30,10 +30,10 @@ public class Model {
         SentenceIterator iter = new CollectionSentenceIterator(texts);
         this.t.setTokenPreProcessor(new CommonPreprocessor());
         this.vec = new Word2Vec.Builder()
-                .minWordFrequency(1)
-                .iterations(5)
-                .layerSize(256)
-                .seed(2)
+                .minWordFrequency(2)
+                .iterations(2)
+                .layerSize(512)
+                .seed(8)
                 .windowSize(5)
                 .iterate(iter)
                 .tokenizerFactory(this.t)
